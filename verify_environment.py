@@ -294,32 +294,100 @@ class EnvironmentVerifier:
         return all_passed
     
     def check_model_cache(self) -> bool:
-        """Check HuggingFace model cache."""
-        self.print_header("Model Cache")
+        """Check HuggingFace model cache configuration."""
+        self.print_header("HuggingFace Cache Configuration")
         
-        cache_dir = Path.home() / ".cache" / "huggingface"
-        if cache_dir.exists():
-            cache_size = sum(f.stat().st_size for f in cache_dir.rglob('*') if f.is_file())
-            cache_size_gb = cache_size / (1024**3)
-            self.print_result("HuggingFace Cache", "PASS", f"Size: {cache_size_gb:.1f}GB")
-            
-            # List some cached models
-            hub_dir = cache_dir / "hub"
-            if hub_dir.exists():
-                models = list(hub_dir.glob("*/*"))
-                if models:
-                    self.print_result("Cached Models", "PASS", f"{len(models)} models found")
-                    for model in models[:5]:  # Show first 5
-                        self.print_result("  Model", "INFO", str(model.name))
-                else:
-                    self.print_result("Cached Models", "WARN", "No models found")
+        # Check environment variables
+        hf_vars = {
+            'HF_HOME': os.environ.get('HF_HOME'),
+            'HF_HUB_CACHE': os.environ.get('HF_HUB_CACHE'),
+            'HF_DATASETS_CACHE': os.environ.get('HF_DATASETS_CACHE'),
+            'HF_HUB_OFFLINE': os.environ.get('HF_HUB_OFFLINE')
+        }
+        
+        all_configured = True
+        for var, value in hf_vars.items():
+            if value:
+                self.print_result(f"Environment: {var}", "PASS", f"{value}")
             else:
-                self.print_result("Cached Models", "WARN", "Hub directory not found")
-            
-            return True
+                self.print_result(f"Environment: {var}", "WARN", "Not set")
+                all_configured = False
+        
+        # Check if cache directories exist
+        cache_dirs = [
+            ('HF_HOME', os.environ.get('HF_HOME')),
+            ('HF_HUB_CACHE', os.environ.get('HF_HUB_CACHE')),
+            ('HF_DATASETS_CACHE', os.environ.get('HF_DATASETS_CACHE'))
+        ]
+        
+        def get_directory_size(path):
+            """Get directory size in human readable format."""
+            try:
+                total_size = sum(f.stat().st_size for f in Path(path).rglob('*') if f.is_file())
+                if total_size > 1024**3:
+                    return f"{total_size / (1024**3):.1f}GB"
+                elif total_size > 1024**2:
+                    return f"{total_size / (1024**2):.1f}MB"
+                else:
+                    return f"{total_size / 1024:.1f}KB"
+            except:
+                return "Unknown"
+        
+        for name, path in cache_dirs:
+            if path and Path(path).exists():
+                size = get_directory_size(path)
+                self.print_result(f"Directory: {name}", "PASS", f"{path} ({size})")
+                
+                # List some contents for hub cache
+                if name == 'HF_HUB_CACHE':
+                    try:
+                        models = list(Path(path).glob("*/*"))
+                        if models:
+                            self.print_result(f"  Cached Models", "PASS", f"{len(models)} models found")
+                            for model in models[:3]:  # Show first 3
+                                self.print_result(f"    Model", "INFO", str(model.name))
+                        else:
+                            self.print_result(f"  Cached Models", "WARN", "No models found")
+                    except Exception as e:
+                        self.print_result(f"  Cached Models", "WARN", f"Error listing: {e}")
+                        
+            elif path:
+                self.print_result(f"Directory: {name}", "FAIL", f"Missing: {path}")
+                all_configured = False
+            else:
+                self.print_result(f"Directory: {name}", "WARN", "Path not configured")
+                all_configured = False
+        
+        # Check offline mode
+        if os.environ.get('HF_HUB_OFFLINE') == '1':
+            self.print_result("Offline Mode", "PASS", "HF_HUB_OFFLINE=1 (offline mode enabled)")
         else:
-            self.print_result("HuggingFace Cache", "WARN", "Cache directory not found")
-            return False
+            self.print_result("Offline Mode", "WARN", "HF_HUB_OFFLINE not set to 1 (online mode)")
+        
+        # Fallback to default cache location if custom paths not configured
+        if not all_configured:
+            default_cache = Path.home() / ".cache" / "huggingface"
+            if default_cache.exists():
+                cache_size = sum(f.stat().st_size for f in default_cache.rglob('*') if f.is_file())
+                cache_size_gb = cache_size / (1024**3)
+                self.print_result("Default Cache", "PASS", f"Size: {cache_size_gb:.1f}GB")
+                
+                # List some cached models
+                hub_dir = default_cache / "hub"
+                if hub_dir.exists():
+                    models = list(hub_dir.glob("*/*"))
+                    if models:
+                        self.print_result("  Default Models", "PASS", f"{len(models)} models found")
+                        for model in models[:3]:  # Show first 3
+                            self.print_result("    Model", "INFO", str(model.name))
+                    else:
+                        self.print_result("  Default Models", "WARN", "No models found")
+                else:
+                    self.print_result("  Default Models", "WARN", "Hub directory not found")
+            else:
+                self.print_result("Default Cache", "WARN", "Default cache directory not found")
+        
+        return True
     
     def check_project_structure(self) -> bool:
         """Check project file structure."""

@@ -190,31 +190,27 @@ create_env_file() {
     print_status "Creating environment configuration..."
     
     cat > .env << EOF
-# Knowledge Graph RAG Environment Configuration
+# Python and ML environment
+PYTHONPATH=\$PWD:\$PYTHONPATH
+CUDA_VISIBLE_DEVICES=0
 
-# Neo4j Configuration
+# HuggingFace cache configuration
+HF_HOME=/data/user_data/\$USER/.hf_cache
+HF_HUB_CACHE=/data/hf_cache/hub
+HF_DATASETS_CACHE=/data/hf_cache/datasets
+HF_HUB_OFFLINE=1
+
+# Neo4j configuration
 NEO4J_URI=bolt://localhost:7687
-NEO4J_USERNAME=neo4j
+NEO4J_USER=neo4j
 NEO4J_PASSWORD=password
-NEO4J_DATABASE=neo4j
 
-# Model Configuration
-DEFAULT_LLM_MODEL=llama_3_2_1b_instruct
-DEFAULT_EMBEDDING_MODEL=qwen_3_embedding_0_6b
-
-# Performance Configuration
-MAX_MEMORY_GB=16
-ENABLE_MODEL_CACHING=true
-CPU_FALLBACK=true
-
-# Logging Configuration
-LOG_LEVEL=INFO
-LOG_FILE=kg_rag.log
-
-# Data Configuration
-DATA_DIR=./data
-CACHE_DIR=./cache
-OUTPUT_DIR=./output
+# Model and data paths
+MODEL_CACHE_DIR=/data/hf_cache/hub
+DATASET_CACHE_DIR=/data/hf_cache/datasets
+OUTPUT_DIR=output
+LOG_DIR=logs
+DATA_DIR=data
 EOF
     
     print_success "Environment file created: .env"
