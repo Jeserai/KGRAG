@@ -123,6 +123,30 @@ install_pytorch() {
     source $(conda info --base)/etc/profile.d/conda.sh
     conda activate kgrag
     
+    # Check if PyTorch is already installed
+    if python3 -c "import torch; print('PyTorch version:', torch.__version__)" 2>/dev/null; then
+        print_info "PyTorch is already installed"
+        pytorch_version=$(python3 -c "import torch; print(torch.__version__)" 2>/dev/null)
+        print_info "Current PyTorch version: $pytorch_version"
+        
+        # Check if CUDA is available
+        cuda_available=$(python3 -c "import torch; print(torch.cuda.is_available())" 2>/dev/null)
+        if [[ "$cuda_available" == "True" ]]; then
+            cuda_version=$(python3 -c "import torch; print(torch.version.cuda)" 2>/dev/null)
+            print_success "CUDA is available with version: $cuda_version"
+        else
+            print_warning "CUDA is not available in PyTorch"
+        fi
+        
+        # Ask user if they want to reinstall
+        read -p "Do you want to reinstall PyTorch? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_info "Skipping PyTorch installation"
+            return
+        fi
+    fi
+    
     print_info "Installing PyTorch 1.12.1 with CUDA 11.4..."
     pip install torch==1.12.1+cu114 -f https://download.pytorch.org/whl/torch_stable.html
     
