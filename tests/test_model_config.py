@@ -5,6 +5,7 @@ Tests for model configuration management.
 import pytest
 import tempfile
 import yaml
+import torch
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
@@ -19,7 +20,7 @@ class TestModelConfig:
         config = ModelConfig(
             name="test-model",
             type="llm",
-            device="cuda",
+            device="cuda",  # Use cuda for GPU servers
             max_length=512,
             temperature=0.7
         )
@@ -36,7 +37,7 @@ class TestModelConfig:
         config = ModelConfig(
             name="test-model",
             type="embedding",
-            device="cpu"
+            device="cuda"  # Use cuda for GPU servers
         )
         
         assert config.max_length is None
@@ -54,8 +55,8 @@ class TestModelConfigManager:
         """Create a sample configuration for testing."""
         return {
             "models": {
-                "llama_3_2_1b": {
-                    "name": "meta-llama/Llama-3.2-1B-Instruct",
+                "llama_3_2_3b": {
+                    "name": "/data/models/huggingface/meta-llama/Llama-3.2-3B-Instruct",
                     "type": "llm",
                     "device": "cuda",
                     "max_length": 2048,
@@ -63,7 +64,7 @@ class TestModelConfigManager:
                     "load_in_4bit": True
                 },
                 "qwen_embedding": {
-                    "name": "Qwen/Qwen2.5-0.6B-Instruct",
+                    "name": "/data/models/huggingface/qwen/Qwen1.5-7B",
                     "type": "embedding",
                     "device": "cuda",
                     "max_seq_length": 512,
@@ -71,11 +72,11 @@ class TestModelConfigManager:
                 }
             },
             "default": {
-                "llm_model": "llama_3_2_1b",
+                "llm_model": "llama_3_2_3b",
                 "embedding_model": "qwen_embedding"
             },
             "performance": {
-                "max_memory_gb": 16,
+                "max_memory_gb": 32,
                 "enable_model_caching": True
             },
             "kg": {
@@ -108,14 +109,22 @@ class TestModelConfigManager:
         """Test getting a specific model configuration."""
         manager = ModelConfigManager(temp_config_file)
         
-        config = manager.get_model_config("llama_3_2_1b")
+        config = manager.get_model_config("llama_3_2_3b")
         
-        assert config.name == "meta-llama/Llama-3.2-1B-Instruct"
+        assert config.name == "/data/models/huggingface/meta-llama/Llama-3.2-3B-Instruct"
         assert config.type == "llm"
-        assert config.device == "cuda"
+        # Device should be cuda if available, otherwise cpu
+        if torch.cuda.is_available():
+            assert config.device == "cuda"
+        else:
+            assert config.device == "cpu"
         assert config.max_length == 2048
         assert config.temperature == 0.7
-        assert config.load_in_4bit is True
+        # Quantization should be disabled for CPU
+        if torch.cuda.is_available():
+            assert config.load_in_4bit is True
+        else:
+            assert config.load_in_4bit is False
     
     def test_get_model_config_not_found(self, temp_config_file):
         """Test getting a non-existent model configuration."""
@@ -131,8 +140,8 @@ class TestModelConfigManager:
         llm_config = manager.get_default_llm_config()
         embedding_config = manager.get_default_embedding_config()
         
-        assert llm_config.name == "meta-llama/Llama-3.2-1B-Instruct"
-        assert embedding_config.name == "Qwen/Qwen2.5-0.6B-Instruct"
+        assert llm_config.name == "/data/models/huggingface/meta-llama/Llama-3.2-3B-Instruct"
+        assert embedding_config.name == "/data/models/huggingface/qwen/Qwen1.5-7B"
     
     def test_list_available_models(self, temp_config_file):
         """Test listing available models."""
@@ -146,7 +155,7 @@ class TestModelConfigManager:
         assert len(llm_models) == 1
         assert len(embedding_models) == 1
         
-        assert "llama_3_2_1b" in all_models
+        assert "llama_3_2_3b" in all_models
         assert "qwen_embedding" in all_models
     
     def test_get_performance_config(self, temp_config_file):
@@ -155,7 +164,7 @@ class TestModelConfigManager:
         
         perf_config = manager.get_performance_config()
         
-        assert perf_config["max_memory_gb"] == 16
+        assert perf_config["max_memory_gb"] == 32
         assert perf_config["enable_model_caching"] is True
     
     def test_get_kg_config(self, temp_config_file):
@@ -172,9 +181,9 @@ class TestModelConfigManager:
         manager = ModelConfigManager(temp_config_file)
         
         updates = {"temperature": 0.8, "max_length": 1024}
-        manager.update_model_config("llama_3_2_1b", updates)
+        manager.update_model_config("llama_3_2_3b", updates)
         
-        config = manager.get_model_config("llama_3_2_1b")
+        config = manager.get_model_config("llama_3_2_3b")
         assert config.temperature == 0.8
         assert config.max_length == 1024
     
@@ -184,7 +193,7 @@ class TestModelConfigManager:
         mock_cuda_available.return_value = False
         
         manager = ModelConfigManager(temp_config_file)
-        config = manager.get_model_config("llama_3_2_1b")
+        config = manager.get_model_config("llama_3_2_3b")
         
         assert config.device == "cpu"
         assert config.load_in_4bit is False
@@ -196,10 +205,26 @@ class TestModelConfigManager:
         mock_cuda_available.return_value = True
         
         manager = ModelConfigManager(temp_config_file)
-        config = manager.get_model_config("llama_3_2_1b")
+        config = manager.get_model_config("llama_3_2_3b")
         
         assert config.device == "cuda"
         assert config.load_in_4bit is True
+    
+    def test_device_auto_detection_real_environment(self, temp_config_file):
+        """Test device detection in real environment (GPU-aware)."""
+        manager = ModelConfigManager(temp_config_file)
+        config = manager.get_model_config("llama_3_2_3b")
+        
+        # Should work regardless of whether CUDA is available
+        assert config.device in ["cuda", "cpu"]
+        
+        # Quantization should be disabled for CPU
+        if config.device == "cpu":
+            assert config.load_in_4bit is False
+            assert config.load_in_8bit is False
+        else:
+            # On GPU, quantization settings should be preserved
+            assert config.load_in_4bit is True
     
     def test_invalid_config_file(self):
         """Test handling of invalid configuration file."""
@@ -222,7 +247,7 @@ class TestModelConfigManager:
         """Test handling of missing required configuration sections."""
         invalid_config = {
             "models": {
-                "test": {"name": "test", "type": "llm", "device": "cpu"}
+                "test": {"name": "test", "type": "llm", "device": "cuda"}
             }
             # Missing "default" section
         }
