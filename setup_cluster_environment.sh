@@ -117,7 +117,7 @@ setup_conda_environment() {
 
 # Install PyTorch with CUDA 11.4
 install_pytorch() {
-    print_header "Installing PyTorch with CUDA 11.4"
+    print_header "Installing PyTorch with CUDA 11.8"
     
     # Activate conda environment
     source $(conda info --base)/etc/profile.d/conda.sh
@@ -147,8 +147,8 @@ install_pytorch() {
         fi
     fi
     
-    print_info "Installing PyTorch 1.12.1 with CUDA 11.4..."
-    pip install torch==1.12.1+cu114 -f https://download.pytorch.org/whl/torch_stable.html
+    print_info "Installing PyTorch 2.3.1 with CUDA 11.8..."
+    pip install torch==2.3.1+cu118 -f https://download.pytorch.org/whl/torch_stable.html
     
     # Verify PyTorch installation
     python3 -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}')"
