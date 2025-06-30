@@ -146,9 +146,16 @@ class ModelManager:
         try:
             logger.info(f"Loading embedding model: {self.embedding_name}")
             
+            model_kwargs = {
+                'device': self.device
+            }
+            # Qwen models require trusting remote code
+            if 'qwen' in self.embedding_name.lower():
+                model_kwargs['trust_remote_code'] = True
+
             self.embedding_model = SentenceTransformer(
                 self.embedding_name,
-                device=self.device
+                **model_kwargs
             )
             
             logger.info(f"Successfully loaded embedding model: {self.embedding_name}")
@@ -347,7 +354,7 @@ class ModelManager:
                 tensor2.unsqueeze(0)
             ).item()
             
-            return max(0.0, similarity)  # Ensure non-negative
+            return max(0.0, similarity)
             
         except Exception as e:
             logger.error(f"Error calculating similarity: {e}")
