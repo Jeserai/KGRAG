@@ -1,0 +1,42 @@
+# Model Configuration
+models:
+  llm:
+    name: "Qwen/Qwen2.5-7B-Instruct"
+    device: "cuda"  
+    load_in_8bit: true  # Reduces memory usage from ~14GB to ~7GB
+    max_memory: null  # Auto-manage memory
+  
+  embedding:
+    # BGE model for embeddings
+    name: "BAAI/bge-large-en-v1.5"
+    device: "cuda"  # Change to "cpu" if no GPU
+
+# Document Processing Configuration
+processing:
+  chunk_size: 800  # Smaller chunks work better with 7B models
+  chunk_overlap: 150
+  batch_size: 2  # Process 2 chunks at a time to avoid memory issues
+
+# Neo4j Database Configuration (optional)
+neo4j:
+  uri: "bolt://localhost:7687"
+  username: "neo4j"
+  password: "password"
+  database: "neo4j"
+
+# Entity Extraction Configuration
+extraction:
+  max_entities_per_chunk: 15  # Conservative limit for better quality
+  entity_types:
+    - "PERSON"
+    - "ORGANIZATION" 
+    - "LOCATION"
+    - "EVENT"
+    - "CONCEPT"
+    - "TECHNOLOGY"
+    - "PRODUCT"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file: "graphrag.log"
