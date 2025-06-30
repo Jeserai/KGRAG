@@ -116,7 +116,7 @@ class GraphRAGPipeline:
                     'load_in_8bit': True
                 },
                 'embedding': {
-                    'name': 'sentence-transformers/all-MiniLM-L6-v2',
+                    'name': 'Qwen/Qwen3-Embedding-0.6B',
                     'device': 'cuda'
                 }
             },
