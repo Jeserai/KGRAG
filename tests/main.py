@@ -382,7 +382,7 @@ OpenAI is an AI research company founded by Sam Altman. They developed GPT-3, a 
 ## Extracted Entities and Relationships:
 """
             
-            response = self.model_manager.generate(
+            response = self.model_manager.inference(
                 test_prompt, 
                 max_tokens=300, 
                 temperature=0.1,

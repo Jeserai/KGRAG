@@ -1,0 +1,967 @@
+{
+  "entities": [
+    {
+      "name": "DALL-E",
+      "type": "PRODUCT",
+      "description": "An AI system for generating images from text descriptions",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Google",
+      "type": "ORGANIZATION",
+      "description": "Technology giant that acquired DeepMind; A tech company developing AI models; A tech company founded by Stanford alumni; Invested in OpenAI",
+      "source_chunks": [
+        "ai_companies_chunk_2",
+        "ai_companies_chunk_1",
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Sundar Pichai",
+      "type": "PERSON",
+      "description": "CEO of Google",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "PaLM",
+      "type": "PRODUCT",
+      "description": "One of Google's competing AI models",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Bard",
+      "type": "PRODUCT",
+      "description": "One of Google's competing AI models",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Gemini",
+      "type": "PRODUCT",
+      "description": "One of Google's competing AI models",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "London",
+      "type": "LOCATION",
+      "description": "Headquarters of Google's DeepMind division",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "DeepMind",
+      "type": "ORGANIZATION",
+      "description": "Google's AI research division; Acquired by Google; Artificial intelligence research company founded by Demis Hassabis and acquired by Google",
+      "source_chunks": [
+        "ai_companies_chunk_2",
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Demis Hassabis",
+      "type": "PERSON",
+      "description": "Founder of DeepMind",
+      "source_chunks": [
+        "ai_companies_chunk_2",
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "AlphaGo",
+      "type": "PRODUCT",
+      "description": "AI model that defeated world champion Go players",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "AlphaFold",
+      "type": "PRODUCT",
+      "description": "AI model that solved protein folding predictions",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "acquisition",
+      "type": "EVENT",
+      "description": "DeepMind was acquired by Google in 2014",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Microsoft",
+      "type": "ORGANIZATION",
+      "description": "Integrated OpenAI's technology into their products; Tech company led by CEO Satya Nadella",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Satya Nadella",
+      "type": "PERSON",
+      "description": "CEO of Microsoft",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "OpenAI",
+      "type": "ORGANIZATION",
+      "description": "Invested in by Google; Artificial intelligence research organization; Technology integrated by Microsoft",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "GPT",
+      "type": "PRODUCT",
+      "description": "Language model developed by OpenAI; Integrated into Microsoft Office, Bing, and Azure",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Microsoft Office",
+      "type": "PRODUCT",
+      "description": "Hosts GPT models; Product line of Microsoft",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Bing",
+      "type": "PRODUCT",
+      "description": "Search engine service by Microsoft; Hosts GPT models",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Azure",
+      "type": "PRODUCT",
+      "description": "Hosts GPT models; Cloud computing platform by Microsoft",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Protein folding predictions",
+      "type": "CONCEPT",
+      "description": "Area of study in computational biology",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Protein folding",
+      "type": "CONCEPT",
+      "description": "Process of determining the three-dimensional structure of proteins",
+      "source_chunks": [
+        "ai_companies_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Elon Musk",
+      "type": "PERSON",
+      "description": "CEO of Tesla and SpaceX",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Tesla",
+      "type": "ORGANIZATION",
+      "description": "Electric vehicle manufacturer",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "SpaceX",
+      "type": "ORGANIZATION",
+      "description": "Space exploration company",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Austin",
+      "type": "LOCATION",
+      "description": "Headquarters of Tesla",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Texas",
+      "type": "LOCATION",
+      "description": "State where Tesla is headquartered",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Model S",
+      "type": "PRODUCT",
+      "description": "Electric vehicle model by Tesla",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Model 3",
+      "type": "PRODUCT",
+      "description": "Electric vehicle model by Tesla",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Model Y",
+      "type": "PRODUCT",
+      "description": "Electric vehicle model by Tesla",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Gigafactory",
+      "type": "PRODUCT",
+      "description": "Large-scale battery production facility",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Cupertino",
+      "type": "LOCATION",
+      "description": "Headquarters of Apple; City where Apple is headquartered",
+      "source_chunks": [
+        "tech_leaders_chunk_0",
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Tim Cook",
+      "type": "PERSON",
+      "description": "CEO of Apple",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Steve Jobs",
+      "type": "PERSON",
+      "description": "Co-founder and former CEO of Apple; Former CEO of Apple",
+      "source_chunks": [
+        "tech_leaders_chunk_0",
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Apple",
+      "type": "ORGANIZATION",
+      "description": "Technology company based in Cupertino, California",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "iPhone",
+      "type": "PRODUCT",
+      "description": "Mobile phone developed by Apple",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "iPad",
+      "type": "PRODUCT",
+      "description": "Tablet computer developed by Apple",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Mac",
+      "type": "PRODUCT",
+      "description": "Personal computer line developed by Apple",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Siri",
+      "type": "PRODUCT",
+      "description": "Virtual assistant developed by Apple",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "California",
+      "type": "LOCATION",
+      "description": "State where Apple is headquartered",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Seattle",
+      "type": "LOCATION",
+      "description": "City where Amazon was founded",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Amazon",
+      "type": "ORGANIZATION",
+      "description": "Online retail and cloud services company; Technology company",
+      "source_chunks": [
+        "tech_leaders_chunk_2",
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "AWS",
+      "type": "PRODUCT",
+      "description": "Amazon Web Services, cloud computing service; Dominant force in cloud infrastructure",
+      "source_chunks": [
+        "tech_leaders_chunk_2",
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Jeff Bezos",
+      "type": "PERSON",
+      "description": "Founder and former CEO of Amazon",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Executive Chairman",
+      "type": "ROLE",
+      "description": "Current position held by Jeff Bezos at Amazon",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Andy Jassy",
+      "type": "PERSON",
+      "description": "Former head of AWS and current Amazon CEO",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Amazon Web Services (AWS)",
+      "type": "PRODUCT",
+      "description": "Cloud infrastructure service",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Computing",
+      "type": "CONCEPT",
+      "description": "Process of using computers to perform tasks",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Dominant force",
+      "type": "CONCEPT",
+      "description": "Strong market position",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Cloud infrastructure",
+      "type": "CONCEPT",
+      "description": "Network of remote servers providing computing services",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "CEO",
+      "type": "CONCEPT",
+      "description": "Chief Executive Officer",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "head of AWS",
+      "type": "CONCEPT",
+      "description": "Position of leadership within AWS; Previous position",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "former head of AWS",
+      "type": "TITLE",
+      "description": "Previous position",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "current Amazon's CEO",
+      "type": "TITLE",
+      "description": "Current position",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "CEO of Amazon",
+      "type": "TITLE",
+      "description": "Current position",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Stanford University",
+      "type": "ORGANIZATION",
+      "description": "A university located in Silicon Valley that trains technology leaders and fosters innovation",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "The Stanford AI Lab",
+      "type": "ORGANIZATION",
+      "description": "A lab at Stanford University that contributes to machine learning research, computer vision, and natural language processing",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Yahoo",
+      "type": "PRODUCT",
+      "description": "A tech company founded by Stanford alumni",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "MIT",
+      "type": "ORGANIZATION",
+      "description": "A university known for its Computer Science and Artificial Intelligence Laboratory in Cambridge, Massachusetts",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Computer Science and Artificial Intelligence Laboratory (CSAIL)",
+      "type": "PRODUCT",
+      "description": "A laboratory at MIT focused on computer science and artificial intelligence",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Silicon Valley",
+      "type": "LOCATION",
+      "description": "A region in California known for its high concentration of technology companies and startups",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "Cambridge, Massachusetts",
+      "type": "LOCATION",
+      "description": "A city in Massachusetts where MIT is located",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "ssing",
+      "type": "PERSON",
+      "description": "A researcher or professor at the university",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "university",
+      "type": "ORGANIZATION",
+      "description": "The educational institution mentioned",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "industry",
+      "type": "ORGANIZATION",
+      "description": "Companies or organizations in the private sector",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "technological breakthroughs",
+      "type": "CONCEPT",
+      "description": "Innovative advancements in technology",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "name": "startups",
+      "type": "PRODUCT",
+      "description": "New businesses created through innovation",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    }
+  ],
+  "relationships": [
+    {
+      "source_entity": "Google",
+      "target_entity": "PaLM",
+      "relationship_type": "DEVELOPED",
+      "description": "Google developed PaLM, one of its competing AI models",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Google",
+      "target_entity": "Bard",
+      "relationship_type": "DEVELOPED",
+      "description": "Google developed Bard, one of its competing AI models",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Google",
+      "target_entity": "Gemini",
+      "relationship_type": "DEVELOPED",
+      "description": "Google developed Gemini, one of its competing AI models",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "DeepMind",
+      "target_entity": "London",
+      "relationship_type": "HEADQUARTERED_IN",
+      "description": "DeepMind's headquarters are located in London",
+      "source_chunks": [
+        "ai_companies_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Tesla",
+      "target_entity": "headquartered in",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Austin; Texas",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Tesla",
+      "target_entity": "produces",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Model S; Model 3; Model Y",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Tesla",
+      "target_entity": "has",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Gigafactories",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Apple",
+      "target_entity": "headquartered in",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Cupertino",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Apple",
+      "target_entity": "continues legacy of",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Steve Jobs",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Apple",
+      "target_entity": "led by",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Tim Cook",
+      "source_chunks": [
+        "tech_leaders_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Apple",
+      "target_entity": "Founded by",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Steve Jobs",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Apple",
+      "target_entity": "Based in",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Cupertino, California",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Apple",
+      "target_entity": "Develops",
+      "relationship_type": "RELATIONSHIP",
+      "description": "iPad; Siri; Mac; iPhone",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Amazon",
+      "target_entity": "Founded by",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Jeff Bezos",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Amazon",
+      "target_entity": "Based in",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Seattle",
+      "source_chunks": [
+        "tech_leaders_chunk_1"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Amazon Web Services (AWS)",
+      "target_entity": "Amazon",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Product of",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "serves as",
+      "target_entity": "Andy Jassy",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Current role at Amazon",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "now",
+      "target_entity": "Present",
+      "relationship_type": "TIME",
+      "description": "Indicates current status",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "former",
+      "target_entity": "Past",
+      "relationship_type": "TIME",
+      "description": "Indicates past role",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "current",
+      "target_entity": "Present",
+      "relationship_type": "TIME",
+      "description": "Indicates current status",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "dominant force",
+      "target_entity": "AWS",
+      "relationship_type": "RELATIONSHIP",
+      "description": "Market position",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "became",
+      "target_entity": "AWS",
+      "relationship_type": "ACTION",
+      "description": "Status change",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "now serves as",
+      "target_entity": "Andy Jassy",
+      "relationship_type": "ACTION",
+      "description": "Current role at Amazon",
+      "source_chunks": [
+        "tech_leaders_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Stanford University",
+      "target_entity": "fosters innovation",
+      "relationship_type": "RELATIONSHIP",
+      "description": "The university supports and encourages innovation in technology",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "The Stanford AI Lab",
+      "target_entity": "contributes to research",
+      "relationship_type": "RELATIONSHIP",
+      "description": "The lab makes significant contributions to various areas of research",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Stanford University",
+      "target_entity": "trains technology leaders",
+      "relationship_type": "RELATIONSHIP",
+      "description": "The university educates and prepares individuals to become leaders in technology",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "MIT",
+      "target_entity": "renowned for",
+      "relationship_type": "RELATIONSHIP",
+      "description": "The university is well-known for its CSAIL",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "Stanford University",
+      "target_entity": "has notable alumni",
+      "relationship_type": "RELATIONSHIP",
+      "description": "The university has produced successful individuals who have founded major tech companies",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "MIT",
+      "target_entity": "located in",
+      "relationship_type": "RELATIONSHIP",
+      "description": "The university is situated in Cambridge, Massachusetts",
+      "source_chunks": [
+        "research_institutions_chunk_0"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "university",
+      "target_entity": "industry",
+      "relationship_type": "PARTNERSHIP_WITH",
+      "description": "Collaboration between the university and companies for technological advancement",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "university",
+      "target_entity": "technological breakthroughs",
+      "relationship_type": "SOURCE_OF",
+      "description": "The university is the origin of the technological advancements",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "university",
+      "target_entity": "startups",
+      "relationship_type": "SOURCE_OF",
+      "description": "The university is the origin of the new businesses created through innovation",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "ssing",
+      "target_entity": "university",
+      "relationship_type": "WORKS_AT",
+      "description": "The person ssing works at the university",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "industry",
+      "target_entity": "technological breakthroughs",
+      "relationship_type": "DESTINATION_OF",
+      "description": "Technological advancements are directed towards industry",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    },
+    {
+      "source_entity": "industry",
+      "target_entity": "startups",
+      "relationship_type": "DESTINATION_OF",
+      "description": "Startups are aimed at industry",
+      "source_chunks": [
+        "research_institutions_chunk_2"
+      ],
+      "confidence": 1.0
+    }
+  ],
+  "statistics": {
+    "documents_processed": 3,
+    "chunks_created": 9,
+    "entities_extracted": 87,
+    "relationships_extracted": 41,
+    "total_time": 2345.513531923294
+  },
+  "timestamp": 1751312032.2416759,
+  "model": "Qwen/Qwen2.5-7B-Instruct"
+}

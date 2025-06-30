@@ -175,7 +175,7 @@ class ModelManager:
             if not self.load_embedding_model():
                 raise RuntimeError("Failed to load embedding model")
     
-    def generate(self, 
+    def inference(self, 
                 prompt: str, 
                 max_tokens: int = 512,
                 temperature: float = 0.1,
