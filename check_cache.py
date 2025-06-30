@@ -92,7 +92,7 @@ def check_models_in_cache(hub_cache: str):
                 print(f"  [WARNING] Found model folder, but it seems incomplete (missing config.json).")
                 all_found = False
         else:
-            print(f"  [ERROR] Model folder not found.")
+            print(f"  [] Model folder not found.")
             all_found = False
         print()
 

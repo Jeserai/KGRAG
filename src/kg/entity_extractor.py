@@ -83,7 +83,7 @@ class EntityExtractor:
             prompt = self._create_extraction_prompt(text)
             
             # Get LLM response
-            response = self.model_manager.generate(
+            response = self.model_manager.inference(
                 prompt=prompt,
                 max_tokens=2048,
                 temperature=0.1,
