@@ -10,6 +10,15 @@ import argparse
 import json
 from pathlib import Path
 from typing import Dict, Any, List
+import sys
+import os
+
+# -- Path Setup --
+# Add the project root to the Python path to allow imports from 'src'
+# This is necessary for running this script directly
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from src.data.document_processor import DocumentProcessor, DocumentChunk, Document
 from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
