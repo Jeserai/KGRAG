@@ -116,7 +116,7 @@ class GraphRAGPipeline:
                     'load_in_8bit': True
                 },
                 'embedding': {
-                    'name': 'Qwen/Qwen3-Embedding-0.6B',
+                    'name': 'sentence-transformers/msmarco-distilbert-base-tas-b',
                     'device': 'cuda'
                 }
             },

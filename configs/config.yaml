@@ -8,7 +8,7 @@ models:
   
   embedding:
     # BGE model for embeddings
-    name: "Qwen/Qwen3-Embedding-0.6B"
+    name: "sentence-transformers/msmarco-distilbert-base-tas-b"
     device: "cuda"  # Change to "cpu" if no GPU
 
 # Document Processing Configuration

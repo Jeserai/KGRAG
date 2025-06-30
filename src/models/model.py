@@ -50,7 +50,7 @@ class ModelManager:
         
         # Model configuration
         self.llm_name = config.get('llm', {}).get('name', 'Qwen/Qwen2.5-7B-Instruct')
-        self.embedding_name = config.get('embedding', {}).get('name', 'Qwen/Qwen3-Embedding-0.6B')
+        self.embedding_name = config.get('embedding', {}).get('name', 'sentence-transformers/msmarco-distilbert-base-tas-b')
         self.device = config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
         self.load_in_8bit = config.get('load_in_8bit', True)
         self.max_memory = config.get('max_memory', None)
