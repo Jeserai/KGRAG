@@ -116,7 +116,7 @@ class GraphRAGPipeline:
                     'load_in_8bit': True
                 },
                 'embedding': {
-                    'name': 'BAAI/bge-large-en-v1.5',
+                    'name': 'sentence-transformers/all-MiniLM-L6-v2',
                     'device': 'cuda'
                 }
             },
