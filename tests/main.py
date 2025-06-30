@@ -11,10 +11,10 @@ import json
 from pathlib import Path
 from typing import Dict, Any, List
 
-from document_processor import DocumentProcessor, DocumentChunk, Document
-from entity_extractor import EntityExtractor, Entity, Relationship
-from graph_storage import GraphStorage
-from model_manager import ModelManager, MockModelManager
+from src.data.document_processor import DocumentProcessor, DocumentChunk, Document
+from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
+from src.kg.neo4j import GraphStorage
+from src.models.model import ModelManager
 
 
 # Configure logging
@@ -476,7 +476,7 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="GraphRAG Pipeline with Qwen 7B")
     parser.add_argument('--input', '-i', type=str, help='Input file or directory')
-    parser.add_argument('--config', '-c', type=str, default='config.yaml', help='Config file path')
+    parser.add_argument('--config', '-c', type=str, default='configs/config.yaml', help='Config file path')
     parser.add_argument('--clear', action='store_true', help='Clear existing graph data')
     parser.add_argument('--query', '-q', type=str, help='Query the knowledge graph')
     parser.add_argument('--stats', action='store_true', help='Show graph statistics')
