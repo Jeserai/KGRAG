@@ -39,7 +39,7 @@ echo "============================================"
 
 # --- Configuration ---
 PROJECT_DIR=$(pwd) # Assumes you are submitting from the project root
-CONDA_ENV_NAME="KGRAG"
+CONDA_ENV_NAME="kgrag"
 MAIN_SCRIPT="tests/main.py"
 CONFIG_FILE="configs/config.yaml"
 
@@ -63,12 +63,6 @@ echo "Environment activated."
 echo "Python executable: $(which python)"
 
 # --- Set Environment Variables ---
-export HF_HUB_OFFLINE=1
-# The cache directories should be set in your ~/.bashrc or job submission command
-# for consistency, but we can set them here as a fallback.
-export HF_HOME=${HF_HOME:-"/data/user_data/$USER/.hf_cache"}
-export HF_HUB_CACHE=${HF_HUB_CACHE:-"/data/hf_cache/hub"}
-
 echo "Running in OFFLINE mode."
 echo "Using Hugging Face cache: $HF_HUB_CACHE"
 echo "Project Directory: $PROJECT_DIR"
