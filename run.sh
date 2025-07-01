@@ -1,254 +1,93 @@
 #!/bin/bash
 
-#SBATCH --job-name=graphrag_experiment
-#SBATCH --partition=gpu                   
+#SBATCH --job-name=kgrag_pipeline
+#SBATCH --partition=gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8                  
-#SBATCH --gres=gpu:1                       
-#SBATCH --mem=32G                         
-#SBATCH --time=02:00:00                    # 2 hour time limit (adjust as needed)
-#SBATCH --output=graphrag_%j.out           # Output file with job ID
-#SBATCH --error=graphrag_%j.err            # Error file with job ID
-#SBATCH --mail-type=BEGIN,END,FAIL         # Email notifications
-#SBATCH --mail-user=yuanguan@andrew.cmu.edu  
+#SBATCH --cpus-per-task=8
+#SBATCH --gres=gpu:1
+#SBATCH --mem=32G
+#SBATCH --time=02:00:00
+#SBATCH --output=logs/kgrag_%j.out
+#SBATCH --error=logs/kgrag_%j.err
 
 # =============================================================================
-# GraphRAG Cluster Experiment Script
-# 
-# This script sets up the environment and runs GraphRAG experiments on a
-# cluster with SLURM job scheduler. It handles model downloading, environment
-# setup, and experiment execution.
+# KGRAG SLURM Submission Script
+#
+# Description:
+#   This script runs the KGRAG pipeline on a SLURM-managed cluster node.
+#   It activates the pre-configured Conda environment and executes the main
+#   Python script.
+#
+# Pre-requisites:
+#   1. A Conda environment named 'KGRAG' must exist and have all
+#      dependencies from requirements.txt installed.
+#   2. All required Hugging Face models must be pre-downloaded in the cache.
+#   3. The 'logs' and 'results' directories should exist.
 # =============================================================================
 
-# Exit on any error for safer execution
-set -e
+set -e # Exit immediately if a command exits with a non-zero status.
+set -u # Treat unset variables as an error.
 
-# Print job information for debugging
+# --- Job Information ---
 echo "============================================"
-echo "GraphRAG Experiment Started"
+echo "KGRAG Pipeline Job Started"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Node: $SLURMD_NODENAME"
-echo "Started at: $(date)"
+echo "Submission Time: $(date)"
 echo "============================================"
 
-# Configuration variables
-PROJECT_DIR="$HOME/KGRAG"          # Path to your project directory
-VENV_NAME="KGRAG_env"                      # Python virtual environment name
-CONDA_ENV_NAME="KGRAG"                    # If using conda instead of venv
-USE_CONDA=true                              # Set to true if using conda
-INPUT_DATA_PATH=""                           # Path to your input documents (optional)
-CONFIG_PATH="configs/config.yaml"            # Path to your config file
+# --- Configuration ---
+PROJECT_DIR=$(pwd) # Assumes you are submitting from the project root
+CONDA_ENV_NAME="KGRAG"
+MAIN_SCRIPT="tests/main.py"
+CONFIG_FILE="configs/config.yaml"
 
-# =============================================================================
-# SECTION 1: Environment Setup
-# =============================================================================
+# Create log and result directories if they don't exist
+mkdir -p logs
+mkdir -p results
 
-echo "Setting up environment..."
+# --- Environment Activation ---
+echo "Activating Conda environment: $CONDA_ENV_NAME"
 
-# Common module names, but check with 'module avail' on your cluster
-module load python/3.9                       # Load Python (adjust version)
-module load cuda/11.8                        # Load CUDA (adjust version)
-module load gcc/9.3.0                        # Load GCC if needed
-
-echo "Loaded modules:"
-module list
-
-# Navigate to project directory
-cd "$PROJECT_DIR"
-echo "Working directory: $(pwd)"
-
-# Set up Hugging Face cache
-export HF_HOME=/data/user_data/yuanguan/.hf_cache
-export HF_HUB_CACHE=/data/hf_cache/hub
-export HF_DATASETS_CACHE=/data/hf_cache/datasets
-export HF_HUB_OFFLINE=1
-
-echo "HuggingFace cache directory: $HF_HOME"
-
-# =============================================================================
-# SECTION 2: Python Environment Activation
-# =============================================================================
-
-echo "Activating Python environment..."
-
-if [ "$USE_CONDA" = true ]; then
-    # Using Conda environment
-    echo "Using Conda environment: $CONDA_ENV_NAME"
-    source activate "$CONDA_ENV_NAME"
+# Source conda.sh to make the 'conda' command available
+if [ -f "$(conda info --base)/etc/profile.d/conda.sh" ]; then
+    source "$(conda info --base)/etc/profile.d/conda.sh"
 else
-    # Using Python virtual environment
-    echo "Using virtual environment: $VENV_NAME"
-    
-    # Create virtual environment if it doesn't exist
-    if [ ! -d "$VENV_NAME" ]; then
-        echo "Creating new virtual environment..."
-        python -m venv "$VENV_NAME"
-    fi
-    
-    # Activate virtual environment
-    source "$VENV_NAME/bin/activate"
-fi
-
-# Verify Python and pip
-echo "Python version: $(python --version)"
-echo "Pip version: $(pip --version)"
-
-# =============================================================================
-# SECTION 3: Install Dependencies
-# =============================================================================
-
-echo "Installing/updating dependencies..."
-
-# Upgrade pip first
-pip install --upgrade pip
-
-# Install requirements with cluster-friendly settings
-pip install -r requirements.txt --user --no-cache-dir
-
-# Install additional dependencies that might be needed on clusters
-pip install --user --no-cache-dir \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-
-echo "Dependencies installed successfully"
-
-# =============================================================================
-# SECTION 4: Model Download (if needed)
-# =============================================================================
-
-echo "Checking if models need to be downloaded..."
-
-# Check if models are already cached
-QWEN_MODEL_PATH="$HF_HUB_CACHE/models--Qwen--Qwen2.5-7B-Instruct"
-BGE_MODEL_PATH="$HF_HUB_CACHE/models--BAAI--bge-large-en-v1.5"
-
-if [ ! -d "$QWEN_MODEL_PATH" ] || [ ! -d "$BGE_MODEL_PATH" ]; then
-    echo "Downloading models..."
-    python src/models/download_models.py
-    
-    if [ $? -eq 0 ]; then
-        echo "Models downloaded successfully"
-    else
-        echo "ERROR: Model download failed"
-        exit 1
-    fi
-else
-    echo "Models already cached, skipping download"
-fi
-
-# =============================================================================
-# SECTION 5: GPU and System Information
-# =============================================================================
-
-echo "System information:"
-echo "GPU Information:"
-nvidia-smi || echo "nvidia-smi not available"
-
-echo "CPU Information:"
-echo "Cores: $(nproc)"
-echo "Memory: $(free -h | grep '^Mem:' | awk '{print $2}')"
-
-echo "CUDA Version:"
-nvcc --version 2>/dev/null || echo "nvcc not available"
-
-# =============================================================================
-# SECTION 6: Test Model Loading
-# =============================================================================
-
-echo "Testing model loading..."
-
-# Test if models can be loaded properly
-python tests/main.py --test-models --config "$CONFIG_PATH"
-
-if [ $? -ne 0 ]; then
-    echo "ERROR: Model loading test failed"
+    echo "Error: conda.sh not found. Cannot initialize Conda." >&2
     exit 1
 fi
 
-echo "Model loading test passed"
+conda activate "$CONDA_ENV_NAME"
+echo "Environment activated."
+echo "Python executable: $(which python)"
 
-# =============================================================================
-# SECTION 7: Run Main Experiment
-# =============================================================================
+# --- Set Environment Variables ---
+export HF_HUB_OFFLINE=1
+# The cache directories should be set in your ~/.bashrc or job submission command
+# for consistency, but we can set them here as a fallback.
+export HF_HOME=${HF_HOME:-"/data/user_data/$USER/.hf_cache"}
+export HF_HUB_CACHE=${HF_HUB_CACHE:-"/data/hf_cache/hub"}
 
-echo "Starting main GraphRAG experiment..."
+echo "Running in OFFLINE mode."
+echo "Using Hugging Face cache: $HF_HUB_CACHE"
+echo "Project Directory: $PROJECT_DIR"
 
-# Prepare experiment command
-EXPERIMENT_CMD="python tests/main.py --config $CONFIG_PATH"
+# --- Run Main Pipeline ---
+echo "Executing KGRAG pipeline script: $MAIN_SCRIPT"
 
-# Add input data if specified
-if [ -n "$INPUT_DATA_PATH" ] && [ -d "$INPUT_DATA_PATH" ]; then
-    EXPERIMENT_CMD="$EXPERIMENT_CMD --input $INPUT_DATA_PATH"
-    echo "Using input data from: $INPUT_DATA_PATH"
+python "$MAIN_SCRIPT" --run-pipeline --clear --config "$CONFIG_FILE"
+
+EXIT_CODE=$?
+
+# --- Job Completion ---
+echo "============================================"
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "Job completed successfully."
 else
-    # Use built-in test data
-    EXPERIMENT_CMD="$EXPERIMENT_CMD --run-pipeline"
-    echo "Using built-in test data"
+    echo "Job failed with exit code $EXIT_CODE."
 fi
-
-# Add other experiment options
-EXPERIMENT_CMD="$EXPERIMENT_CMD --clear --stats --validate"
-
-echo "Executing: $EXPERIMENT_CMD"
-
-# Run the experiment with error handling
-$EXPERIMENT_CMD
-
-EXPERIMENT_EXIT_CODE=$?
-
-# =============================================================================
-# SECTION 8: Post-Processing and Cleanup
-# =============================================================================
-
-if [ $EXPERIMENT_EXIT_CODE -eq 0 ]; then
-    echo "Experiment completed successfully"
-    
-    # Export results if graph storage is available
-    echo "Exporting results..."
-    python tests/main.py --export "results_${SLURM_JOB_ID}.json" --config "$CONFIG_PATH"
-    
-    # Generate final statistics
-    echo "Final graph statistics:"
-    python tests/main.py --stats --config "$CONFIG_PATH"
-    
-else
-    echo "ERROR: Experiment failed with exit code $EXPERIMENT_EXIT_CODE"
-fi
-
-# =============================================================================
-# SECTION 9: Result Summary and Cleanup
-# =============================================================================
-
-echo "============================================"
-echo "Job Summary"
-echo "============================================"
-echo "Job ID: $SLURM_JOB_ID"
-echo "End time: $(date)"
-echo "Exit code: $EXPERIMENT_EXIT_CODE"
-
-# Show file sizes of outputs
-echo "Output files:"
-ls -lh graphrag_*.out graphrag_*.err 2>/dev/null || echo "No output files found"
-ls -lh *.json 2>/dev/null || echo "No JSON result files found"
-ls -lh *.log 2>/dev/null || echo "No log files found"
-
-# Optional: Copy results to a results directory
-RESULTS_DIR="$HOME/graphrag_results/job_$SLURM_JOB_ID"
-mkdir -p "$RESULTS_DIR"
-
-# Copy important files to results directory
-cp -f *.json "$RESULTS_DIR/" 2>/dev/null || echo "No JSON files to copy"
-cp -f *.log "$RESULTS_DIR/" 2>/dev/null || echo "No log files to copy"
-cp -f "graphrag_${SLURM_JOB_ID}.out" "$RESULTS_DIR/" 2>/dev/null || echo "No stdout file to copy"
-cp -f "graphrag_${SLURM_JOB_ID}.err" "$RESULTS_DIR/" 2>/dev/null || echo "No stderr file to copy"
-
-echo "Results copied to: $RESULTS_DIR"
-
-# Clean up temporary files if needed
-# rm -f temp_*.txt 2>/dev/null || true
-
-echo "GraphRAG experiment completed"
+echo "End Time: $(date)"
 echo "============================================"
 
-# Exit with the same code as the main experiment
-exit $EXPERIMENT_EXIT_CODE
+exit $EXIT_CODE
