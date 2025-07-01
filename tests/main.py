@@ -13,9 +13,6 @@ from typing import Dict, Any, List
 import sys
 import os
 
-# -- Path Setup --
-# Add the project root to the Python path to allow imports from 'src'
-# This is necessary for running this script directly
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
@@ -24,9 +21,9 @@ from src.data.document_processor import DocumentProcessor, DocumentChunk, Docume
 from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
 from src.kg.neo4j import GraphStorage
 from src.models.model import ModelManager
+from src.models.prompt import get_extraction_prompt
+from test_data import get_test_documents
 
-
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -50,8 +47,6 @@ class GraphRAGPipeline:
             config_path: Path to configuration file
         """
         self.config = self._load_config(config_path)
-        
-        # Initialize components
         self.model_manager = ModelManager(self.config.get('models', {}))
         self.document_processor = DocumentProcessor(
             chunk_size=self.config.get('processing', {}).get('chunk_size', 1000),
@@ -62,7 +57,6 @@ class GraphRAGPipeline:
             max_entities_per_chunk=self.config.get('extraction', {}).get('max_entities_per_chunk', 20)
         )
         
-        # Initialize Neo4j (with graceful fallback)
         self.graph_storage = None
         try:
             self.graph_storage = GraphStorage(
@@ -75,7 +69,6 @@ class GraphRAGPipeline:
             logger.warning(f"Neo4j not available: {e}")
             logger.info("Pipeline will run without graph storage")
         
-        # Statistics
         self.stats = {
             'start_time': None,
             'end_time': None,
@@ -172,8 +165,8 @@ class GraphRAGPipeline:
                 else:
                     raise ValueError(f"Invalid input path: {input_path}")
             else:
-                # Use test data
-                documents = self._create_test_documents()
+                # Use test data from the dedicated test_data module
+                documents = get_test_documents()
             
             self.stats['documents_processed'] = len(documents)
             
@@ -240,7 +233,6 @@ class GraphRAGPipeline:
             logger.info("GraphRAG pipeline completed successfully")
             self._log_statistics()
             
-            # Save results to file
             self._save_results(merged_entities, merged_relationships)
             
             return self.stats
@@ -250,152 +242,45 @@ class GraphRAGPipeline:
             self.stats['error'] = str(e)
             return self.stats
     
-    def _create_test_documents(self) -> List[Document]:
-        """Create test documents for demonstration."""
-        test_docs = [
-            Document(
-                id="ai_overview",
-                title="AI and Technology Overview",
-                content="""
-                Artificial Intelligence (AI) has revolutionized the technology landscape. Leading companies like 
-                OpenAI, Google, and Microsoft are at the forefront of AI development. OpenAI, founded by Sam Altman 
-                and others, has created groundbreaking models like GPT-3 and GPT-4. These large language models 
-                demonstrate remarkable capabilities in natural language understanding and generation.
-                
-                Google's DeepMind has made significant breakthroughs in areas like AlphaGo, which defeated world 
-                champion Go players, and AlphaFold, which solved protein folding predictions. The company's 
-                headquarters in London serves as a hub for cutting-edge AI research.
-                
-                Machine Learning, a subset of AI, enables computers to learn patterns from data without explicit 
-                programming. Deep Learning, using neural networks with multiple layers, has been particularly 
-                successful in computer vision and natural language processing tasks.
-                """
-            ),
-            Document(
-                id="tech_companies",
-                title="Technology Companies and Innovation",
-                content="""
-                The technology sector is dominated by several major players. Apple, based in Cupertino, California, 
-                is known for innovative consumer products like the iPhone and Mac computers. Tim Cook serves as the 
-                CEO, continuing the legacy established by Steve Jobs.
-                
-                Amazon, led by Andy Jassy (who succeeded Jeff Bezos), has expanded from e-commerce to cloud computing 
-                with Amazon Web Services (AWS). The company's Seattle headquarters oversees operations that span 
-                logistics, retail, and enterprise technology solutions.
-                
-                Tesla, under Elon Musk's leadership, has pioneered electric vehicle technology and autonomous driving 
-                systems. The company's Gigafactories in Nevada, Texas, and other locations represent the future of 
-                sustainable manufacturing.
-                """
-            ),
-            Document(
-                id="research_institutions",
-                title="Research Institutions and Academia",
-                content="""
-                Stanford University, located in Silicon Valley, has been instrumental in training many technology 
-                leaders and fostering innovation. The Stanford AI Lab has contributed significantly to machine 
-                learning research and computer vision advances.
-                
-                MIT (Massachusetts Institute of Technology) in Cambridge, Massachusetts, is renowned for its 
-                Computer Science and Artificial Intelligence Laboratory (CSAIL). Researchers there work on 
-                robotics, human-computer interaction, and distributed systems.
-                
-                Carnegie Mellon University in Pittsburgh has a strong tradition in AI research, particularly in 
-                areas like computer vision, natural language processing, and robotics. The university's partnerships 
-                with industry have led to numerous technological breakthroughs.
-                """
-            )
-        ]
-        
-        logger.info(f"Created {len(test_docs)} test documents")
-        return test_docs
-    
     def _save_results(self, entities: List[Entity], relationships: List[Relationship]):
-        """Save extraction results to JSON file."""
-        results = {
-            'entities': [
-                {
-                    'name': e.name,
-                    'type': e.type,
-                    'description': e.description,
-                    'source_chunks': e.source_chunks,
-                    'confidence': e.confidence
-                }
-                for e in entities
-            ],
-            'relationships': [
-                {
-                    'source_entity': r.source_entity,
-                    'target_entity': r.target_entity,
-                    'relationship_type': r.relationship_type,
-                    'description': r.description,
-                    'source_chunks': r.source_chunks,
-                    'confidence': r.confidence
-                }
-                for r in relationships
-            ],
+        """Save extracted entities and relationships to a JSON file in the 'results' directory."""
+        output_dir = Path("results")
+        output_dir.mkdir(exist_ok=True)  # Create the directory if it doesn't exist
+
+        output_data = {
+            'entities': [e.__dict__ for e in entities],
+            'relationships': [r.__dict__ for r in relationships],
             'statistics': self.stats
         }
-        
-        output_file = f"graphrag_results_{int(time.time())}.json"
-        with open(output_file, 'w') as f:
-            json.dump(results, f, indent=2)
-        
-        logger.info(f"Results saved to {output_file}")
+
+        output_file = output_dir / f"graph_results_{int(time.time())}.json"
+
+        try:
+            with open(output_file, 'w') as f:
+                json.dump(output_data, f, indent=4)
+            logger.info(f"Saved results to {output_file}")
+        except Exception as e:
+            logger.error(f"Failed to save results: {e}")
     
     def test_model_loading(self):
-        """Test model loading and basic functionality."""
+        """Test LLM and embedding model loading and basic inference."""
         logger.info("Testing model loading...")
         
-        # Test LLM loading
-        llm_success = self.model_manager.load_llm()
-        if llm_success:
-            logger.info("✓ LLM loaded successfully")
-            
-            # Test generation
-            test_prompt = """You are an AI assistant that helps extract entities and relationships from text for knowledge graph construction.
-
-## Task
-Extract entities and relationships from the provided text. Focus on the most important and relevant entities that would be valuable in a knowledge graph.
-
-## Entity Types
-Extract entities of these types: PERSON, ORGANIZATION, LOCATION, EVENT, CONCEPT, TECHNOLOGY, PRODUCT, DATE
-
-## Output Format
-For each entity, provide:
-(entity_name<|>entity_type<|>entity_description)##
-
-For each relationship, provide:
-(source_entity<|>relationship_type<|>target_entity<|>relationship_description)##
-
-## Guidelines
-1. Entity names should be specific and descriptive
-2. Descriptions should be concise but informative
-3. Relationships should capture meaningful connections
-4. Use consistent naming (e.g., "John Smith" not "John" and "Smith" separately)
-5. Focus on entities that appear multiple times or are central to the text
-6. Maximum 20 entities per text
-
-## Text to Process:
-OpenAI is an AI research company founded by Sam Altman. They developed GPT-3, a large language model that uses machine learning.
-
-## Extracted Entities and Relationships:
-"""
-            
-            response = self.model_manager.inference(
-                test_prompt, 
-                max_tokens=300, 
-                temperature=0.1,
-                stop_sequences=["<|COMPLETE|>"]
-            )
-            
-            if response.strip():
-                logger.info("✓ LLM generation successful")
-                logger.info(f"Sample response: {response[:200]}...")
-            else:
-                logger.warning("⚠ LLM generation returned empty response")
+        # Test LLM generation
+        logger.info("Testing LLM generation...")
+        # Use the centralized prompt generator
+        test_content = "OpenAI is an AI research company based in San Francisco, founded by Sam Altman."
+        test_prompt = get_extraction_prompt(test_content)
+        
+        response = self.model_manager.inference(
+            test_prompt,
+            max_tokens=150, # Increased for a more realistic extraction
+            stop_sequences=["<|COMPLETE|>"]
+        )
+        if response and response.strip():
+            logger.info(f"✓ LLM generated response: {response[:100]}...")
         else:
-            logger.error("✗ Failed to load LLM")
+            logger.warning("⚠ LLM generation returned empty response")
         
         # Test embedding model loading
         embedding_success = self.model_manager.load_embedding_model()
@@ -403,22 +288,23 @@ OpenAI is an AI research company founded by Sam Altman. They developed GPT-3, a 
             logger.info("✓ Embedding model loaded successfully")
             
             # Test embedding generation
-            test_embedding = self.model_manager.generate_embedding("artificial intelligence research")
-            if test_embedding:
-                logger.info(f"✓ Embedding generation successful (dimension: {len(test_embedding)})")
+            test_embedding = self.model_manager.generate_embedding("This is a test sentence.")
+            if isinstance(test_embedding, list) and len(test_embedding) > 0:
+                logger.info(f"✓ Embedding generated with dimension: {len(test_embedding)}")
             else:
-                logger.warning("⚠ Embedding generation failed")
+                logger.warning("⚠ Embedding generation failed or returned empty.")
+                embedding_success = False
         else:
             logger.error("✗ Failed to load embedding model")
-        
-        # Show model info
+
+        # Get model info
         info = self.model_manager.get_model_info()
         logger.info(f"Model info: {info}")
         
-        return llm_success and embedding_success
+        return response.strip() and embedding_success
     
     def query_graph(self, query: str, max_results: int = 10) -> List[Dict[str, Any]]:
-        """Query the knowledge graph."""
+        """Query the graph for entities."""
         if not self.graph_storage:
             logger.error("Graph storage not available")
             return []

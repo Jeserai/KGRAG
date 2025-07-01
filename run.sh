@@ -1,17 +1,17 @@
 #!/bin/bash
 
 #SBATCH --job-name=graphrag_experiment
-#SBATCH --partition=gpu                    # Use your cluster's GPU partition name
+#SBATCH --partition=gpu                   
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8                  # Adjust based on your cluster
-#SBATCH --gres=gpu:1                       # Request 1 GPU (adjust if needed)
-#SBATCH --mem=32G                          # Memory requirement for Qwen 7B
+#SBATCH --cpus-per-task=8                  
+#SBATCH --gres=gpu:1                       
+#SBATCH --mem=32G                         
 #SBATCH --time=02:00:00                    # 2 hour time limit (adjust as needed)
 #SBATCH --output=graphrag_%j.out           # Output file with job ID
 #SBATCH --error=graphrag_%j.err            # Error file with job ID
 #SBATCH --mail-type=BEGIN,END,FAIL         # Email notifications
-#SBATCH --mail-user=your.email@university.edu  # Replace with your email
+#SBATCH --mail-user=yuanguan@andrew.cmu.edu  
 
 # =============================================================================
 # GraphRAG Cluster Experiment Script
@@ -32,11 +32,11 @@ echo "Node: $SLURMD_NODENAME"
 echo "Started at: $(date)"
 echo "============================================"
 
-# Configuration variables - MODIFY THESE FOR YOUR CLUSTER
-PROJECT_DIR="$HOME/graphrag_project"          # Path to your project directory
-VENV_NAME="graphrag_env"                      # Python virtual environment name
-CONDA_ENV_NAME="graphrag"                    # If using conda instead of venv
-USE_CONDA=false                              # Set to true if using conda
+# Configuration variables
+PROJECT_DIR="$HOME/KGRAG"          # Path to your project directory
+VENV_NAME="KGRAG_env"                      # Python virtual environment name
+CONDA_ENV_NAME="KGRAG"                    # If using conda instead of venv
+USE_CONDA=true                              # Set to true if using conda
 INPUT_DATA_PATH=""                           # Path to your input documents (optional)
 CONFIG_PATH="configs/config.yaml"            # Path to your config file
 

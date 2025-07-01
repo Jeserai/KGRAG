@@ -1,25 +1,11 @@
 """
 Hugging Face Cache and Environment Diagnostic Tool
-
-Description:
-  This script helps diagnose issues with Hugging Face model caching in offline
-  or cluster environments. It checks for the necessary environment variables,
-  verifies the cache directory paths, and confirms whether the specific models
-  required by the KGRAG project exist in the cache.
-
-Usage:
-  Run this script in the exact same way you run your main experiment job.
-  For example, if you use a submission script (e.g., job.sh), modify it to
-  run this Python file instead of tests/main.py.
-
-  $ python check_cache.py
 """
 
 import os
 from pathlib import Path
 
 # --- Configuration ---
-# Models your project needs (update if they change)
 REQUIRED_MODELS = [
     "Qwen/Qwen2.5-7B-Instruct",
     "Qwen/Qwen3-Embedding-0.6B"
@@ -39,7 +25,6 @@ def check_environment():
     print(f"HUGGING_FACE_HUB_TOKEN: {'Set' if token else 'Not Set'}")
 
     if not hub_cache:
-        # If HF_HUB_CACHE is not set, determine the default path
         default_home = hf_home or os.path.expanduser("~/.cache")
         hub_cache = str(Path(default_home) / "huggingface/hub")
         print(f"\\n[INFO] HF_HUB_CACHE is not set. Will check the default location:")
@@ -84,7 +69,6 @@ def check_models_in_cache(hub_cache: str):
         print(f"  -> at: {model_path}")
 
         if model_path.exists():
-            # Check for a key file to be more certain
             config_file = model_path / "config.json"
             if config_file.exists():
                 print(f"  [SUCCESS] Found model folder and config.json.")
