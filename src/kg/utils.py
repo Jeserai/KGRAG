@@ -1,0 +1,164 @@
+from entity_extractor import EntityExtractor, Entity, Relationship
+import json
+import re
+import logging
+from typing import List, Dict, Any, Optional, Tuple
+from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
+
+logger = logging.getLogger(__name__)
+
+
+class KGUtils(EntityExtractor):
+
+    def merge_entities(self, entities: List[Entity]) -> List[Entity]:
+        """
+        Merge duplicate entities based on name similarity.
+        
+        Args:
+            entities: List of entities to merge
+            
+        Returns:
+            List of merged entities
+        """
+        if not entities:
+            return []
+        
+        # Group entities by normalized name
+        entity_groups = {}
+        
+        for entity in entities:
+            # Normalize entity name for grouping
+            normalized_name = self._normalize_entity_name(entity.name)
+            
+            if normalized_name not in entity_groups:
+                entity_groups[normalized_name] = []
+            entity_groups[normalized_name].append(entity)
+        
+        # Merge entities in each group
+        merged_entities = []
+        for group in entity_groups.values():
+            merged_entity = self._merge_entity_group(group)
+            merged_entities.append(merged_entity)
+        
+        logger.info(f"Merged {len(entities)} entities into {len(merged_entities)} unique entities")
+        return merged_entities
+    
+    def merge_relationships(self, relationships: List[Relationship]) -> List[Relationship]:
+        """
+        Merge duplicate relationships.
+        
+        Args:
+            relationships: List of relationships to merge
+            
+        Returns:
+            List of merged relationships
+        """
+        if not relationships:
+            return []
+        
+        # Group relationships by source, target, and type
+        relationship_groups = {}
+        
+        for relationship in relationships:
+            key = (
+                self._normalize_entity_name(relationship.source_entity),
+                self._normalize_entity_name(relationship.target_entity),
+                relationship.relationship_type
+            )
+            
+            if key not in relationship_groups:
+                relationship_groups[key] = []
+            relationship_groups[key].append(relationship)
+        
+        # Merge relationships in each group
+        merged_relationships = []
+        for group in relationship_groups.values():
+            merged_relationship = self._merge_relationship_group(group)
+            merged_relationships.append(merged_relationship)
+        
+        logger.info(f"Merged {len(relationships)} relationships into {len(merged_relationships)} unique relationships")
+        return merged_relationships
+    
+    def _normalize_entity_name(self, name: str) -> str:
+        """Normalize entity name for comparison."""
+        if not name:
+            return ""
+        
+        # Convert to lowercase and remove extra whitespace
+        normalized = re.sub(r'\s+', ' ', name.lower().strip())
+        
+        # Remove common prefixes/suffixes
+        prefixes = ['the ', 'a ', 'an ']
+        for prefix in prefixes:
+            if normalized.startswith(prefix):
+                normalized = normalized[len(prefix):]
+        
+        return normalized
+    
+    def _merge_entity_group(self, entities: List[Entity]) -> Entity:
+        """Merge a group of similar entities."""
+        if len(entities) == 1:
+            return entities[0]
+        
+        # Use the most common name
+        names = [e.name for e in entities]
+        merged_name = max(set(names), key=names.count)
+        
+        # Use the most common type
+        types = [e.type for e in entities]
+        merged_type = max(set(types), key=types.count)
+        
+        # Combine descriptions
+        descriptions = [e.description for e in entities if e.description]
+        merged_description = "; ".join(set(descriptions))
+        
+        # Combine source chunks
+        source_chunks = []
+        for entity in entities:
+            source_chunks.extend(entity.source_chunks)
+        
+        return Entity(
+            name=merged_name,
+            type=merged_type,
+            description=merged_description,
+            source_chunks=list(set(source_chunks)),
+            confidence=sum(e.confidence for e in entities) / len(entities)
+        )
+    
+    def _merge_relationship_group(self, relationships: List[Relationship]) -> Relationship:
+        """Merge a group of similar relationships."""
+        if len(relationships) == 1:
+            return relationships[0]
+        
+        # Use the first relationship as template
+        template = relationships[0]
+        
+        # Combine descriptions
+        descriptions = [r.description for r in relationships if r.description]
+        merged_description = "; ".join(set(descriptions))
+        
+        # Combine source chunks
+        source_chunks = []
+        for relationship in relationships:
+            source_chunks.extend(relationship.source_chunks)
+        
+        return Relationship(
+            source_entity=template.source_entity,
+            target_entity=template.target_entity,
+            relationship_type=template.relationship_type,
+            description=merged_description,
+            source_chunks=list(set(source_chunks)),
+            confidence=sum(r.confidence for r in relationships) / len(relationships)
+        )
+    
+    def get_extraction_statistics(self) -> Dict[str, Any]:
+        """Get extraction statistics and configuration."""
+        return {
+            'max_entities_per_chunk': self.max_entities_per_chunk,
+            'entity_types': self.entity_types,
+            'tuple_delimiter': self.tuple_delimiter,
+            'record_delimiter': self.record_delimiter,
+            'model_info': self.model_manager.get_model_info() if hasattr(self.model_manager, 'get_model_info') else {}
+        }

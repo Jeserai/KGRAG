@@ -19,7 +19,6 @@ if project_root not in sys.path:
 
 from src.data.document_processor import DocumentProcessor, DocumentChunk, Document
 from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
-from src.kg.neo4j import GraphStorage
 from src.models.model import ModelManager
 from src.models.prompt import get_extraction_prompt
 from test_data import get_test_documents
@@ -56,18 +55,6 @@ class GraphRAGPipeline:
             model_manager=self.model_manager,
             max_entities_per_chunk=self.config.get('extraction', {}).get('max_entities_per_chunk', 20)
         )
-        
-        self.graph_storage = None
-        try:
-            self.graph_storage = GraphStorage(
-                uri=self.config.get('neo4j', {}).get('uri', 'bolt://localhost:7687'),
-                username=self.config.get('neo4j', {}).get('username', 'neo4j'),
-                password=self.config.get('neo4j', {}).get('password', 'password'),
-                database=self.config.get('neo4j', {}).get('database', 'neo4j')
-            )
-        except Exception as e:
-            logger.warning(f"Neo4j not available: {e}")
-            logger.info("Pipeline will run without graph storage")
         
         self.stats = {
             'start_time': None,
@@ -213,19 +200,6 @@ class GraphRAGPipeline:
             
             logger.info(f"After merging: {len(merged_entities)} unique entities, {len(merged_relationships)} unique relationships")
             
-            # Step 5: Store in graph (if available)
-            if self.graph_storage:
-                logger.info("Step 5: Storing in knowledge graph")
-                entities_stored = self.graph_storage.store_entities(merged_entities)
-                relationships_stored = self.graph_storage.store_relationships(merged_relationships)
-                
-                self.stats['entities_stored'] = entities_stored
-                self.stats['relationships_stored'] = relationships_stored
-            else:
-                logger.info("Step 5: Skipping graph storage (Neo4j not available)")
-                self.stats['entities_stored'] = 0
-                self.stats['relationships_stored'] = 0
-            
             # Finalize
             self.stats['end_time'] = time.time()
             self.stats['total_time'] = self.stats['end_time'] - self.stats['start_time']
@@ -303,43 +277,7 @@ class GraphRAGPipeline:
         
         return response.strip() and embedding_success
     
-    def query_graph(self, query: str, max_results: int = 10) -> List[Dict[str, Any]]:
-        """Query the graph for entities."""
-        if not self.graph_storage:
-            logger.error("Graph storage not available")
-            return []
-        
-        return self.graph_storage.search_entities(query, max_results)
-    
-    def get_graph_statistics(self) -> Dict[str, Any]:
-        """Get knowledge graph statistics."""
-        if not self.graph_storage:
-            logger.error("Graph storage not available")
-            return {}
-        
-        return self.graph_storage.get_graph_statistics()
-    
-    def validate_graph(self) -> Dict[str, Any]:
-        """Validate graph integrity."""
-        if not self.graph_storage:
-            logger.error("Graph storage not available")
-            return {}
-        
-        return self.graph_storage.validate_graph_integrity()
-    
-    def export_graph(self, output_path: str):
-        """Export graph data."""
-        if not self.graph_storage:
-            logger.error("Graph storage not available")
-            return
-        
-        graph_data = self.graph_storage.export_graph_data()
-        
-        with open(output_path, 'w') as f:
-            json.dump(graph_data, f, indent=2, default=str)
-        
-        logger.info(f"Graph data exported to {output_path}")
-    
+   
     def _log_statistics(self):
         """Log pipeline statistics."""
         stats = self.stats
