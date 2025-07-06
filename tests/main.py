@@ -70,8 +70,14 @@ def main():
         pipeline.display_results(results)
 
         # Save results
-        filename = pipeline.save_results(results)
-        print(f"\n Complete results saved to: {filename}")
+        save = pipeline.save_results(results)
+        print(save)
+
+        #entities, relationships = pipeline.load_results("my_graph")
+        #print(f"Loaded {len(entities)} entities, {len(relationships)} relationships")
+
+        # Display results
+        pipeline.display_results(results)
 
         return results
 

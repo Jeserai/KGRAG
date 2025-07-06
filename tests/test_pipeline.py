@@ -18,6 +18,7 @@ from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
 from src.models.model import ModelManager
 from src.models.prompt import get_extraction_prompt
 from test_data import get_test_documents
+from src.kg.storage import GraphStorage
 
 logging.basicConfig(
     level=logging.INFO,
@@ -52,7 +53,7 @@ class GraphRAGPipeline:
             model_manager=self.model_manager,
             max_entities_per_chunk=self.config.get('extraction', {}).get('max_entities_per_chunk', 20)
         )
-        
+        self.storage = GraphStorage()
         self.stats = {
             'start_time': None,
             'end_time': None,
@@ -86,58 +87,6 @@ class GraphRAGPipeline:
     def load_models(self) -> bool:
         """Load all required models."""
         return self.model_manager.load_model()
-
-    def run_pipeline(self, documents: List[Document] = None) -> Dict[str, Any]:
-        """Run the complete GraphRAG pipeline."""
-        start_time = time.time()
-
-        logger.info(" Starting GraphRAG pipeline")
-
-        documents = get_test_documents()
-
-        self.stats['documents_processed'] = len(documents)
-
-        # Step 1: Process documents into chunks
-        logger.info(" Processing documents into chunks:")
-        all_chunks = []
-        for doc in documents:
-            chunks = self.doc_processor.chunk_document(doc)
-            all_chunks.extend(chunks)
-
-        self.stats['chunks_created'] = len(all_chunks)
-        logger.info(f" Created {len(all_chunks)} total chunks")
-
-        # Step 2: Extract entities and relationships
-        logger.info("Extracting entities and relationships:")
-        all_entities = []
-        all_relationships = []
-
-        for i, chunk in enumerate(all_chunks):
-            logger.info(f"Processing chunk {i+1}/{len(all_chunks)}")
-            entities, relationships = self.entity_extractor.extract_from_chunk(chunk)
-            all_entities.extend(entities)
-            all_relationships.extend(relationships)
-
-        self.stats['entities_extracted'] = len(all_entities)
-        self.stats['relationships_extracted'] = len(all_relationships)
-
-        # Step 3: Merge duplicates
-        logger.info("Merging duplicates:")
-        merged_entities = self.entity_extractor.merge_entities(all_entities)
-        merged_relationships = self.entity_extractor.merge_relationships(all_relationships)
-
-        # Finalize
-        end_time = time.time()
-        self.stats['total_time'] = end_time - start_time
-
-        logger.info("Pipeline completed successfully!")
-        self.log_statistics()
-
-        return {
-            'entities': merged_entities,
-            'relationships': merged_relationships,
-            'statistics': self.stats
-        }
 
     def log_statistics(self):
         """Log pipeline statistics."""
@@ -199,43 +148,63 @@ class GraphRAGPipeline:
         print("\n" + "="*80)
 
     def save_results(self, results: Dict[str, Any], filename: str = None):
-        """Save results to JSON file."""
-        if filename is None:
-            filename = f"graphrag_results_{int(time.time())}.json"
+        self.storage.save(results['entities'], results['relationships'], filename)
+        return f"Saved as {filename}"
+    
+    def load_results(self, filename: str = None):
+        return self.storage.load(filename)
+    
+    def run_pipeline(self, documents: List[Document] = None) -> Dict[str, Any]:
+        """Run the complete GraphRAG pipeline."""
+        start_time = time.time()
 
-        # Convert dataclasses to dictionaries for JSON serialization
-        json_results = {
-            'entities': [
-                {
-                    'name': e.name,
-                    'type': e.type,
-                    'description': e.description,
-                    'source_chunks': e.source_chunks,
-                    'confidence': e.confidence
-                }
-                for e in results['entities']
-            ],
-            'relationships': [
-                {
-                    'source_entity': r.source_entity,
-                    'target_entity': r.target_entity,
-                    'relationship_type': r.relationship_type,
-                    'description': r.description,
-                    'source_chunks': r.source_chunks,
-                    'confidence': r.confidence
-                }
-                for r in results['relationships']
-            ],
-            'statistics': results['statistics'],
-            'timestamp': time.time(),
-            'model': self.model_manager.model_name
+        logger.info(" Starting GraphRAG pipeline")
+
+        documents = get_test_documents()
+
+        self.stats['documents_processed'] = len(documents)
+
+        # Step 1: Process documents into chunks
+        logger.info(" Processing documents into chunks:")
+        all_chunks = []
+        for doc in documents:
+            chunks = self.doc_processor.chunk_document(doc)
+            all_chunks.extend(chunks)
+
+        self.stats['chunks_created'] = len(all_chunks)
+        logger.info(f" Created {len(all_chunks)} total chunks")
+
+        # Step 2: Extract entities and relationships
+        logger.info("Extracting entities and relationships:")
+        all_entities = []
+        all_relationships = []
+
+        for i, chunk in enumerate(all_chunks):
+            logger.info(f"Processing chunk {i+1}/{len(all_chunks)}")
+            entities, relationships = self.entity_extractor.extract_from_chunk(chunk)
+            all_entities.extend(entities)
+            all_relationships.extend(relationships)
+
+        self.stats['entities_extracted'] = len(all_entities)
+        self.stats['relationships_extracted'] = len(all_relationships)
+
+        # Step 3: Merge duplicates
+        logger.info("Merging duplicates:")
+        merged_entities = self.entity_extractor.merge_entities(all_entities)
+        merged_relationships = self.entity_extractor.merge_relationships(all_relationships)
+
+        # Finalize
+        end_time = time.time()
+        self.stats['total_time'] = end_time - start_time
+
+        logger.info("Pipeline completed successfully!")
+        self.log_statistics()
+
+        return {
+            'entities': merged_entities,
+            'relationships': merged_relationships,
+            'statistics': self.stats
         }
-
-        with open(filename, 'w') as f:
-            json.dump(json_results, f, indent=2)
-
-        logger.info(f" Results saved to {filename}")
-        return filename
 
     def cleanup(self):
         """Clean up resources."""
