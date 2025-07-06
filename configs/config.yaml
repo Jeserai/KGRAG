@@ -17,13 +17,6 @@ processing:
   chunk_overlap: 150
   batch_size: 2  # Process 2 chunks at a time to avoid memory issues
 
-# Neo4j Database Configuration (optional)
-neo4j:
-  uri: "bolt://localhost:7687"
-  username: "neo4j"
-  password: "password"
-  database: "neo4j"
-
 # Entity Extraction Configuration
 extraction:
   max_entities_per_chunk: 15  # Conservative limit for better quality

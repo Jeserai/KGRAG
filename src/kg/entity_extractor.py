@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
+from models.prompt import get_extraction_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -79,8 +80,8 @@ class EntityExtractor:
             return [], []
         
         try:
-            # Generate the extraction prompt
-            prompt = self._create_extraction_prompt(text)
+            # Augement a prompt for extraction
+            prompt = get_extraction_prompt(text)
             
             # Get LLM response
             response = self.model_manager.inference(
@@ -130,41 +131,6 @@ class EntityExtractor:
         
         logger.info(f"Batch extracted {len(all_entities)} entities and {len(all_relationships)} relationships")
         return all_entities, all_relationships
-    
-    def _create_extraction_prompt(self, text: str) -> str:
-        """Create the entity extraction prompt."""
-        
-        entity_types_str = ", ".join(self.entity_types)
-        
-        prompt = f"""You are an AI assistant that helps extract entities and relationships from text for knowledge graph construction.
-
-## Task
-Extract entities and relationships from the provided text. Focus on the most important and relevant entities that would be valuable in a knowledge graph.
-
-## Entity Types
-Extract entities of these types: {entity_types_str}
-
-## Output Format
-For each entity, provide:
-(entity_name{self.tuple_delimiter}entity_type{self.tuple_delimiter}entity_description){self.record_delimiter}
-
-For each relationship, provide:
-(source_entity{self.tuple_delimiter}relationship_type{self.tuple_delimiter}target_entity{self.tuple_delimiter}relationship_description){self.record_delimiter}
-
-## Guidelines
-1. Entity names should be specific and descriptive
-2. Descriptions should be concise but informative
-3. Relationships should capture meaningful connections
-4. Use consistent naming (e.g., "John Smith" not "John" and "Smith" separately)
-5. Focus on entities that appear multiple times or are central to the text
-6. Maximum {self.max_entities_per_chunk} entities per text
-
-## Text to Process:
-{text}
-
-## Extracted Entities and Relationships:
-"""
-        return prompt
     
     def _parse_extraction_response(self, response: str, chunk_id: str) -> Tuple[List[Entity], List[Relationship]]:
         """Parse the structured LLM response into entities and relationships."""
