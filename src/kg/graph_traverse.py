@@ -350,39 +350,3 @@ class GraphTraversal:
             rel_types[rel.relationship_type] += 1
         
         return dict(rel_types)
-
-
-# Utility functions
-def merge_traversal_results(results: List[TraversalResult]) -> TraversalResult:
-    """Merge multiple traversal results."""
-    all_entities = []
-    all_relationships = []
-    all_paths = []
-    max_depth = 0
-    
-    seen_entities = set()
-    seen_relationships = set()
-    
-    for result in results:
-        # Merge entities (avoid duplicates)
-        for entity in result.entities:
-            if entity.name not in seen_entities:
-                all_entities.append(entity)
-                seen_entities.add(entity.name)
-        
-        # Merge relationships (avoid duplicates)
-        for rel in result.relationships:
-            rel_key = (rel.source_entity, rel.target_entity, rel.relationship_type)
-            if rel_key not in seen_relationships:
-                all_relationships.append(rel)
-                seen_relationships.add(rel_key)
-        
-        all_paths.extend(result.traversal_path)
-        max_depth = max(max_depth, result.depth_reached)
-    
-    return TraversalResult(
-        entities=all_entities,
-        relationships=all_relationships,
-        traversal_path=all_paths,
-        depth_reached=max_depth
-    )

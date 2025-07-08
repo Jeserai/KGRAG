@@ -252,22 +252,3 @@ class EmbeddingSearch:
                     ))
         
         return results[:top_k]
-
-
-# Simple utility functions
-def filter_entities_by_type(search_results: List[SearchResult], entity_types: List[str]) -> List[SearchResult]:
-    """Filter search results by entity type."""
-    return [result for result in search_results if result.entity.type in entity_types]
-
-
-def deduplicate_results(search_results: List[SearchResult]) -> List[SearchResult]:
-    """Remove duplicate entities from search results."""
-    seen_names = set()
-    unique_results = []
-    
-    for result in search_results:
-        if result.entity.name not in seen_names:
-            unique_results.append(result)
-            seen_names.add(result.entity.name)
-    
-    return unique_results

@@ -6,44 +6,15 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
+from embedding_search import SearchResult
+from graph_traverse import EntityScore, GraphTraversal, TraversalResult
+from retriever import HybridRetriever, RetrievalResult
+from data.document_processor import DocumentChunk
 
 logger = logging.getLogger(__name__)
 
 
 class KGUtils(EntityExtractor):
-
-    def merge_entities(self, entities: List[Entity]) -> List[Entity]:
-        """
-        Merge duplicate entities based on name similarity.
-        
-        Args:
-            entities: List of entities to merge
-            
-        Returns:
-            List of merged entities
-        """
-        if not entities:
-            return []
-        
-        # Group entities by normalized name
-        entity_groups = {}
-        
-        for entity in entities:
-            # Normalize entity name for grouping
-            normalized_name = self._normalize_entity_name(entity.name)
-            
-            if normalized_name not in entity_groups:
-                entity_groups[normalized_name] = []
-            entity_groups[normalized_name].append(entity)
-        
-        # Merge entities in each group
-        merged_entities = []
-        for group in entity_groups.values():
-            merged_entity = self._merge_entity_group(group)
-            merged_entities.append(merged_entity)
-        
-        logger.info(f"Merged {len(entities)} entities into {len(merged_entities)} unique entities")
-        return merged_entities
     
     def merge_relationships(self, relationships: List[Relationship]) -> List[Relationship]:
         """
@@ -97,36 +68,6 @@ class KGUtils(EntityExtractor):
         
         return normalized
     
-    def _merge_entity_group(self, entities: List[Entity]) -> Entity:
-        """Merge a group of similar entities."""
-        if len(entities) == 1:
-            return entities[0]
-        
-        # Use the most common name
-        names = [e.name for e in entities]
-        merged_name = max(set(names), key=names.count)
-        
-        # Use the most common type
-        types = [e.type for e in entities]
-        merged_type = max(set(types), key=types.count)
-        
-        # Combine descriptions
-        descriptions = [e.description for e in entities if e.description]
-        merged_description = "; ".join(set(descriptions))
-        
-        # Combine source chunks
-        source_chunks = []
-        for entity in entities:
-            source_chunks.extend(entity.source_chunks)
-        
-        return Entity(
-            name=merged_name,
-            type=merged_type,
-            description=merged_description,
-            source_chunks=list(set(source_chunks)),
-            confidence=sum(e.confidence for e in entities) / len(entities)
-        )
-    
     def _merge_relationship_group(self, relationships: List[Relationship]) -> Relationship:
         """Merge a group of similar relationships."""
         if len(relationships) == 1:
@@ -162,3 +103,96 @@ class KGUtils(EntityExtractor):
             'record_delimiter': self.record_delimiter,
             'model_info': self.model_manager.get_model_info() if hasattr(self.model_manager, 'get_model_info') else {}
         }
+
+# Embedding search utility functions
+def filter_entities_by_type(search_results: List[SearchResult], entity_types: List[str]) -> List[SearchResult]:
+    """Filter search results by entity type."""
+    return [result for result in search_results if result.entity.type in entity_types]
+
+def deduplicate_results(search_results: List[SearchResult]) -> List[SearchResult]:
+    """Remove duplicate entities from search results."""
+    seen_names = set()
+    unique_results = []
+    
+    for result in search_results:
+        if result.entity.name not in seen_names:
+            unique_results.append(result)
+            seen_names.add(result.entity.name)
+    
+    return unique_results
+
+# Graph traversal utility functions
+def merge_traversal_results(results: List[TraversalResult]) -> TraversalResult:
+    """Merge multiple traversal results."""
+    all_entities = []
+    all_relationships = []
+    all_paths = []
+    max_depth = 0
+    
+    seen_entities = set()
+    seen_relationships = set()
+    
+    for result in results:
+        # Merge entities (avoid duplicates)
+        for entity in result.entities:
+            if entity.name not in seen_entities:
+                all_entities.append(entity)
+                seen_entities.add(entity.name)
+        
+        # Merge relationships (avoid duplicates)
+        for rel in result.relationships:
+            rel_key = (rel.source_entity, rel.target_entity, rel.relationship_type)
+            if rel_key not in seen_relationships:
+                all_relationships.append(rel)
+                seen_relationships.add(rel_key)
+        
+        all_paths.extend(result.traversal_path)
+        max_depth = max(max_depth, result.depth_reached)
+    
+    return TraversalResult(
+        entities=all_entities,
+        relationships=all_relationships,
+        traversal_path=all_paths,
+        depth_reached=max_depth
+    )
+
+# Utility functions for retriever integration
+def create_retriever_from_pipeline_results(entities: List[Entity], 
+                                          relationships: List[Relationship],
+                                          embedding_model,
+                                          chunks: List[DocumentChunk] = None) -> HybridRetriever:
+    """Create retriever from pipeline extraction results."""
+    return HybridRetriever(entities, relationships, embedding_model, chunks)
+
+
+def format_retrieval_for_context(result: RetrievalResult, max_length: int = 2000) -> str:
+    """Format retrieval result for use as LLM context."""
+    context_parts = []
+    
+    # Add entities
+    if result.entities:
+        context_parts.append("Relevant Entities:")
+        for entity in result.entities[:10]:  # Limit entities
+            entity_text = f"- {entity.name} ({entity.type}): {entity.description or 'N/A'}"
+            context_parts.append(entity_text)
+    
+    # Add relationships  
+    if result.relationships:
+        context_parts.append("\nRelevant Relationships:")
+        for rel in result.relationships[:5]:  # Limit relationships
+            rel_text = f"- {rel.source_entity} → {rel.relationship_type} → {rel.target_entity}"
+            context_parts.append(rel_text)
+    
+    # Add text chunks
+    if result.context_chunks:
+        context_parts.append("\nRelevant Context:")
+        for chunk in result.context_chunks[:3]:  # Limit chunks
+            chunk_text = f"- {chunk.text[:200]}..." if len(chunk.text) > 200 else f"- {chunk.text}"
+            context_parts.append(chunk_text)
+    
+    # Combine and truncate if needed
+    full_context = "\n".join(context_parts)
+    if len(full_context) > max_length:
+        full_context = full_context[:max_length] + "..."
+    
+    return full_context
