@@ -1,4 +1,4 @@
-from entity_extractor import EntityExtractor, Entity, Relationship
+from kg.extractor.entity_extractor import EntityExtractor, Entity, Relationship
 import json
 import re
 import logging
@@ -6,9 +6,9 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
-from embedding_search import SearchResult
-from graph_traverse import EntityScore, GraphTraversal, TraversalResult
-from retriever import HybridRetriever, RetrievalResult
+from kg.retriever.embedding_search import SearchResult
+from kg.retriever.graph_traverse import EntityScore, GraphTraversal, TraversalResult
+from kg.retriever.retriever import HybridRetriever, RetrievalResult
 from data.document_processor import DocumentChunk
 
 logger = logging.getLogger(__name__)

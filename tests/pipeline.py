@@ -16,8 +16,8 @@ if str(project_root) not in sys.path:
 from src.data.document_processor import DocumentProcessor, Document
 from src.models.model import ModelManager
 from tests.test_data import get_test_documents
-from src.kg.entity_extractor import EntityExtractor
-from src.kg.merging import EntityMerger
+from kg.extractor.entity_extractor import EntityExtractor
+from kg.extractor.merging import EntityMerger
 from src.kg.storage import GraphStorage
 
 # Logging setup

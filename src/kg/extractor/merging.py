@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from collections import defaultdict
 import logging
 import numpy as np
-from entity_extractor import Entity, Relationship
+from kg.extractor.entity_extractor import Entity, Relationship
 
 logger = logging.getLogger(__name__)
 

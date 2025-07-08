@@ -18,7 +18,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from src.data.document_processor import DocumentProcessor, DocumentChunk, Document
-from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
+from kg.extractor.entity_extractor import EntityExtractor, Entity, Relationship
 from src.models.model import ModelManager
 from src.models.prompt import get_extraction_prompt
 from test_data import get_test_documents

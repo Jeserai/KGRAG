@@ -8,7 +8,7 @@ from typing import List, Dict, Tuple, Optional
 import numpy as np
 from dataclasses import dataclass
 
-from src.kg.entity_extractor import Entity, Relationship
+from kg.extractor.entity_extractor import Entity, Relationship
 from src.data.document_processor import DocumentChunk
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class SearchResult:
 
 
 class EmbeddingSearch:
-    """Simple embedding-based search for entities and text units."""
+    """Embedding-based search for entities and text units."""
     
     def __init__(self, embedding_model, entities: List[Entity], chunks: List[DocumentChunk] = None):
         """

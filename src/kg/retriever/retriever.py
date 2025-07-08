@@ -8,10 +8,10 @@ from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
 import time
 
-from src.kg.entity_extractor import Entity, Relationship
+from kg.extractor.entity_extractor import Entity, Relationship
 from src.data.document_processor import DocumentChunk
-from embedding_search import EmbeddingSearch, SearchResult as EmbedSearchResult
-from graph_traverse import GraphTraversal, TraversalResult, EntityScore
+from kg.retriever.embedding_search import EmbeddingSearch, SearchResult as EmbedSearchResult
+from kg.retriever.graph_traverse import GraphTraversal, TraversalResult, EntityScore
 
 logger = logging.getLogger(__name__)
 
