@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class KGUtils(EntityExtractor):
-    
+    def __init__(self, entities: List[Entity], relationships: List[Relationship]):
+        super().__init__(entities, relationships)
+
     def merge_relationships(self, relationships: List[Relationship]) -> List[Relationship]:
         """
         Merge duplicate relationships.

@@ -63,6 +63,9 @@ def run_pipeline(cfg: Dict[str, Any], input_path: Path | None = None) -> Dict[st
         max_entities_per_chunk=cfg.get("extraction", {}).get("max_entities_per_chunk", 15),
     )
 
+    logger.info("Loading LLM & embedding models (eager)…")
+    model_mgr.ensure_models_loaded()
+
     merger = EntityMerger(name_threshold=0.8)
     storage = GraphStorage(base_path="results")
 

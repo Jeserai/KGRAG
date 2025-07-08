@@ -8,6 +8,9 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 class ModelUtils(ModelManager):
+    def __init__(self, llm_model: str, embedding_model: str, device: str = 'cuda', load_in_8bit: bool = False):
+        super().__init__(llm_model, embedding_model, device, load_in_8bit)
+
     def generate_embeddings_batch(self, texts: List[str], batch_size: int = 32) -> List[List[float]]:
         """
         Generate embeddings for multiple texts in batches.
