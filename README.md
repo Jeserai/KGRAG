@@ -14,7 +14,7 @@ $ sbatch run_pipeline.sh (or modify the script to use srun if preferred)
 1. Save an extracted graph to the `results/` directory
 2. Print a short summary
 
-# 1  Create / activate Conda env (Python ≥3.9)
+# 1  Create / activate Conda env
 ```bash
 conda create -n kgrag python=3.9 -y
 conda activate kgrag
@@ -31,7 +31,7 @@ python src/models/download_models.py   # optional – or place models manually i
 python tests/pipeline.py                # built-in sample docs
 python tests/pipeline.py --input docs/  # your own folder
 ```
-Results are written to `results/` (JSON < 1 k nodes, Parquet otherwise).
+Results are written to `results/` (JSON < 1k nodes, Parquet otherwise).
 
 # 4  Run on the cluster
 ```bash
@@ -65,7 +65,7 @@ run.sh                – SLURM submission script
 - Experiment with implicit-entity discovery from transformer embeddings.
 
 
---
+---
 
 
 ## Potential Further Research:
