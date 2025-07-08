@@ -22,7 +22,7 @@ from src.kg.entity_extractor import EntityExtractor, Entity, Relationship
 from src.models.model import ModelManager
 from src.models.prompt import get_extraction_prompt
 from test_data import get_test_documents
-from test_pipeline import GraphRAGPipeline
+from pipeline import run_pipeline, load_config, to_serializable
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,58 +35,24 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-def main():
-    """Main entry point."""
-    parser = argparse.ArgumentParser(description="GraphRAG Pipeline with Qwen 7B")
-    parser.add_argument('--input', '-i', type=str, help='Input file or directory')
-    parser.add_argument('--config', '-c', type=str, default='configs/config.yaml', help='Config file path')
-    parser.add_argument('--clear', action='store_true', help='Clear existing graph data')
-    parser.add_argument('--query', '-q', type=str, help='Query the knowledge graph')
-    parser.add_argument('--stats', action='store_true', help='Show graph statistics')
-    parser.add_argument('--validate', action='store_true', help='Validate graph integrity')
-    parser.add_argument('--export', '-e', type=str, help='Export graph data to file')
-    parser.add_argument('--test-models', action='store_true', help='Test model loading and generation')
-    parser.add_argument('--run-pipeline', action='store_true', help='Run the full pipeline with test data')
-    
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Run the GraphRAG pipeline")
+    parser.add_argument("--input", "-i", type=str, help="Path to file OR directory of docs")
+    parser.add_argument("--config", "-c", default="configs/config.yaml", help="YAML config path")
     args = parser.parse_args()
-    
-    # Initialize pipeline
-    pipeline = GraphRAGPipeline(args.config)
 
-    try:
-        # Load models
-        print("\n Loading models...")
-        if not pipeline.load_models():
-            print("Failed to load models")
-            return
+    cfg = load_config(Path(args.config))
+    start = time.time()
+    results = run_pipeline(cfg, Path(args.input) if args.input else None)
+    elapsed = time.time() - start
 
-        print("Models loaded successfully!")
-
-        # Run pipeline
-        print("\n Running the pipeline...")
-        results = pipeline.run_pipeline()
-
-        # Display results
-        pipeline.display_results(results)
-
-        # Save results
-        save = pipeline.save_results(results)
-        print(save)
-
-        #entities, relationships = pipeline.load_results("my_graph")
-        #print(f"Loaded {len(entities)} entities, {len(relationships)} relationships")
-
-        # Display results
-        pipeline.display_results(results)
-
-        return results
-
-    except Exception as e:
-        logger.error(f" Pipeline error: {e}")
-        print(f" Error: {e}")
-
-    finally:
-        pipeline.cleanup()
+    # Quick summary to stdout
+    print("\n=== SUMMARY ===")
+    print(f"Documents: {results['docs']}")
+    print(f"Chunks: {results['chunks']}")
+    print(f"Entities: {len(results['entities'])}")
+    print(f"Relationships: {len(results['relationships'])}")
+    print(f"Total time: {elapsed:.1f}s")
 
 if __name__ == "__main__":
-    main()
+    main() 

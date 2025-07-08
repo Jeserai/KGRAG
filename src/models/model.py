@@ -8,8 +8,6 @@ import gc
 import torch
 from typing import Optional, Dict, Any, List
 from pathlib import Path
-
-
 from transformers import (
         AutoTokenizer, 
         AutoModelForCausalLM, 
@@ -17,11 +15,9 @@ from transformers import (
         pipeline,
         BitsAndBytesConfig
     )
- 
 from sentence_transformers import SentenceTransformer
    
 logger = logging.getLogger(__name__)
-
 
 class ModelManager:
     """Manages local LLM and embedding models for GraphRAG."""

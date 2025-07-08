@@ -7,13 +7,13 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from collections import defaultdict
 import logging
+import numpy as np
 from entity_extractor import Entity, Relationship
 
 logger = logging.getLogger(__name__)
 
 
-class SimpleEntityMerger:
-    """Simple entity merging focused on name and type similarity."""
+class EntityMerger:
     
     def __init__(self, 
                  name_threshold: float = 0.8,
@@ -229,31 +229,3 @@ class SimpleEntityMerger:
             source_chunks=unique_chunks,
             confidence=avg_confidence
         )
-
-
-def test_simple_merging():
-    """Test the simple merging with obvious duplicates."""
-    
-    test_entities = [
-        Entity("OpenAI", "ORGANIZATION", "AI research company", ["chunk1"], 0.9),
-        Entity("OpenAI Inc.", "ORGANIZATION", "AI research company", ["chunk2"], 0.8),
-        Entity("openai", "ORGANIZATION", "The AI company", ["chunk3"], 0.85),
-        Entity("Apple", "ORGANIZATION", "Technology company", ["chunk4"], 0.9),
-        Entity("Apple Inc.", "ORGANIZATION", "Tech company that makes iPhones", ["chunk5"], 0.95),
-        Entity("apple", "PRODUCT", "Red fruit", ["chunk6"], 0.8),  # Different type - should NOT merge
-        Entity("Google", "ORGANIZATION", "Search engine company", ["chunk7"], 0.9),
-    ]
-    
-    # Test without embeddings
-    merger = SimpleEntityMerger(name_threshold=0.8, use_embeddings=False)
-    merged = merger.merge_entities(test_entities)
-    
-    print("\nTest Results:")
-    print(f"Original: {len(test_entities)} entities")
-    print(f"Merged: {len(merged)} entities")
-    
-    print("\nMerged entities:")
-    for entity in merged:
-        print(f"- {entity.name} ({entity.type}): {entity.description[:50]}...")
-    
-    return merged

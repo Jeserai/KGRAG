@@ -130,7 +130,3 @@ class ModelUtils(ModelManager):
             torch.cuda.empty_cache()
         
         logger.info("Model cleanup completed")
-    
-    def __del__(self):
-        """Cleanup on deletion."""
-        self.cleanup()
