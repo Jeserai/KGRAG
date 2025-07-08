@@ -6,8 +6,8 @@
 ## Quick start
 
 # Testing Command:
-$ python tests/pipeline.py [--input /path/to/docs_or_dir] [--config cfg.yaml]
-Or:
+$ python tests/pipeline.py [--input /path/to/docs_or_dir] [--config cfg.yaml]  
+Or:  
 $ sbatch run_pipeline.sh (or modify the script to use srun if preferred)
 
 # Output:
