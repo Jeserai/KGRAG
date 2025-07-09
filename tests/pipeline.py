@@ -122,3 +122,37 @@ def run_pipeline(cfg: Dict[str, Any], input_path: Path | None = None) -> Dict[st
     logger.info("Graph & query prompts saved under results/")
 
     return {"docs": len(documents), "chunks": len(chunks), "entities": len(entities), "relationships": len(relationships)}
+
+
+# ---------------------------------------------------------------------------
+# CLI entry-point
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the GraphRAG test pipeline.")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="configs/config.yaml",
+        help="Path to the YAML configuration file (default: configs/config.yaml)",
+    )
+    parser.add_argument(
+        "--input",
+        type=str,
+        default=None,
+        help="Optional path to a file or directory containing documents to process.",
+    )
+
+    args = parser.parse_args()
+
+    # Resolve config
+    cfg_path = Path(args.config).expanduser()
+    cfg = load_config(cfg_path)
+
+    # Run pipeline
+    stats = run_pipeline(cfg, Path(args.input).expanduser() if args.input else None)
+
+    # Pretty-print summary statistics
+    print("\nPipeline completed successfully. Summary:\n" + json.dumps(stats, indent=2))
