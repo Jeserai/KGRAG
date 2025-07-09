@@ -204,55 +204,48 @@ class DocumentProcessor:
         return documents
     
     def chunk_document(self, document: Document) -> List[DocumentChunk]:
-        """
-        Split a document into chunks for processing.
-        
-        Args:
-            document: Document to chunk
-            
-        Returns:
-            List of DocumentChunk objects
-        """
+        """Split a document into chunks."""
         if not document.content.strip():
-            logger.warning(f"Document {document.id} has no content to chunk")
             return []
-        
-        # Split the text
-        text_chunks = self.text_splitter.split_text(document.content)
-        
+
+        text = document.content
         chunks = []
-        current_char = 0
-        
-        for i, chunk_text in enumerate(text_chunks):
-            # Find the start position of this chunk in the original text
-            start_char = document.content.find(chunk_text, current_char)
-            if start_char == -1:
-                start_char = current_char
-            
-            end_char = start_char + len(chunk_text)
-            current_char = end_char
-            
-            # Safely handle metadata unpacking
-            base_metadata = document.metadata if document.metadata is not None else {}
-            chunk_metadata = {
-                **base_metadata,
-                'source_title': document.title,
-                'source_path': document.source_path
-            }
-            
-            chunk = DocumentChunk(
-                id=f"{document.id}_chunk_{i}",
-                text=chunk_text,
-                source_doc_id=document.id,
-                chunk_index=i,
-                start_char=start_char,
-                end_char=end_char,
-                metadata=chunk_metadata,
-                token_count=self._count_tokens(chunk_text)
-            )
-            chunks.append(chunk)
-        
-        logger.info(f"Created {len(chunks)} chunks from document {document.id}")
+
+        # Simple chunking by character count
+        start = 0
+        chunk_index = 0
+
+        while start < len(text):
+            end = start + self.chunk_size
+
+            # Try to break at sentence boundary
+            if end < len(text):
+                last_period = text.rfind('.', start, end)
+                last_newline = text.rfind('\n', start, end)
+                break_point = max(last_period, last_newline)
+
+                if break_point > start:
+                    end = break_point + 1
+
+            chunk_text = text[start:end].strip()
+
+            if chunk_text:
+                chunk = DocumentChunk(
+                    id=f"{document.id}_chunk_{chunk_index}",
+                    text=chunk_text,
+                    source_doc_id=document.id,
+                    chunk_index=chunk_index,
+                    metadata={'source_title': document.title}
+                )
+                chunks.append(chunk)
+                chunk_index += 1
+
+            # Move start position with overlap
+            start = end - self.chunk_overlap
+            if start <= 0:
+                start = end
+
+        logger.info(f" Created {len(chunks)} chunks from document '{document.title}'")
         return chunks
     
     def process_documents(self, documents: List[Document]) -> List[DocumentChunk]:

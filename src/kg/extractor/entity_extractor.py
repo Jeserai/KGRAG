@@ -91,7 +91,7 @@ class EntityExtractor:
                 stop_sequences=[self.completion_delimiter]
             )
 
-            print(response)
+            logger.info(f"Response: {response}")
             
             # Parse the structured response
             entities, relationships = self._parse_extraction_response(response, chunk_id)
