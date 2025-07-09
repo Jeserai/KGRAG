@@ -6,9 +6,9 @@
 ## Quick start
 
 # Testing Command:
-$ python tests/pipeline.py [--input /path/to/docs_or_dir] [--config cfg.yaml]  
+$ python tests/main.py [--input /path/to/docs_or_dir] [--config cfg.yaml]  
 Or:  
-$ sbatch run_pipeline.sh (or modify the script to use srun if preferred)
+$ sbatch run.sh (or modify the script to use srun if preferred)
 
 # Output:
 1. Save an extracted graph to the `results/` directory
@@ -28,9 +28,9 @@ python src/models/download_models.py   # optional – or place models manually i
 
 # 3  Run locally
 ```bash
-python tests/pipeline.py                # built-in sample docs
-python tests/pipeline.py --input docs/  # your own folder
-python tests/pipeline.py --config configs/config.yaml # use config file
+python tests/main.py                # built-in sample docs
+python tests/main.py --input docs/  # your own folder
+python tests/main.py --config configs/config.yaml # use config file
 ```
 Results are written to `results/` (JSON < 1k nodes, Parquet otherwise).
 

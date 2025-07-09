@@ -51,6 +51,8 @@ def main() -> None:
     print("\n=== SUMMARY ===")
     for k, v in stats.items():
         print(f"{k}: {v}")
+    end = time.time()
+    print(f"Time taken: {end - start} seconds")
 
 if __name__ == "__main__":
     main() 
