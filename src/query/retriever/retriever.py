@@ -118,7 +118,7 @@ class HybridRetriever:
         logger.info(f"Found {len(seed_entities)} seed entities: {seed_entities}")
         
         # Step 2: Graph traversal from seed entities
-        traversal_result = self.graph_traversal.breadth_first_traversal(
+        traversal_result = self.graph_traversal.bfs(
             seed_entities=seed_entities,
             max_depth=max_depth,
             max_entities=top_k
