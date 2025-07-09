@@ -30,6 +30,7 @@ python src/models/download_models.py   # optional – or place models manually i
 ```bash
 python tests/pipeline.py                # built-in sample docs
 python tests/pipeline.py --input docs/  # your own folder
+python tests/pipeline.py --config configs/config.yaml # use config file
 ```
 Results are written to `results/` (JSON < 1k nodes, Parquet otherwise).
 
