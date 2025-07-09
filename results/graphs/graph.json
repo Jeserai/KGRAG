@@ -1,0 +1,169 @@
+{
+  "entities": [
+    {
+      "name": "entity_name",
+      "type": "ENTITY_TYPE",
+      "description": "entity_description",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "MIT",
+      "type": "ORGANIZATION",
+      "description": "Massachusetts Institute of Technology, known for producing technology entrepreneurs and AI research",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "Carnegie Mellon University",
+      "type": "ORGANIZATION",
+      "description": "A university in Pittsburgh with a strong tradition in AI research, including computer vision, natural language processing, and robotics",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "Pittsburgh",
+      "type": "LOCATION",
+      "description": "City where Carnegie Mellon University is located",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "AI research",
+      "type": "CONCEPT",
+      "description": "Area of academic and practical study focusing on intelligent machines and software",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "computer vision",
+      "type": "CONCEPT",
+      "description": "Field within AI focused on enabling computers to interpret and understand visual information",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "natural language processing",
+      "type": "CONCEPT",
+      "description": "Subfield of AI concerned with the interaction between human language and computers",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "robotics",
+      "type": "CONCEPT",
+      "description": "Branch of engineering and science concerned with the design, construction, operation, and application of robots",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "technology entrepreneurs",
+      "type": "CONCEPT",
+      "description": "Individuals who start and run technology companies",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "startups",
+      "type": "CONCEPT",
+      "description": "New businesses, often technology-based, that are typically small and innovative",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "partnerships",
+      "type": "CONCEPT",
+      "description": "Collaborative arrangements between organizations for mutual benefit",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "Technological breakthroughs",
+      "type": "CONCEPT",
+      "description": "Significant advancements or innovations in technology",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "name": "distributed systems",
+      "type": "CONCEPT",
+      "description": "Computer systems consisting of multiple autonomous computers connected by a network",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    }
+  ],
+  "relationships": [
+    {
+      "source_entity": "source_entity",
+      "target_entity": "target_entity",
+      "relationship_type": "RELATIONSHIP_TYPE",
+      "description": "relationship_description",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "source_entity": "MIT",
+      "target_entity": "technology entrepreneurs",
+      "relationship_type": "PRODUCES",
+      "description": "Produces numerous technology entrepreneurs",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    },
+    {
+      "source_entity": "MIT",
+      "target_entity": "AI research",
+      "relationship_type": "INVOLVED_IN",
+      "description": "Continues to be at the forefront of AI research",
+      "source_chunks": [
+        "research_institutions_chunk_1"
+      ],
+      "confidence": 1.0,
+      "properties": null
+    }
+  ]
+}
