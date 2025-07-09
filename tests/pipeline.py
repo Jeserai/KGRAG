@@ -15,7 +15,7 @@ from src.data.document_processor import DocumentProcessor, Document
 from src.models.model import ModelManager
 from tests.test_data import get_test_documents
 from src.kg.extractor.entity_extractor import EntityExtractor
-from src.kg.extractor.merging import SimpleEntityMerger as EntityMerger
+from src.kg.extractor.merging import EntityMerger
 from src.kg.storage import GraphStorage
 from src.query.retriever.retriever import HybridRetriever
 from src.query.augment import build_augmented_prompt
