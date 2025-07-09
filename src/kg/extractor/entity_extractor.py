@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
-from models.prompt import get_extraction_prompt
+from src.models.prompt import get_extraction_prompt
 
 logger = logging.getLogger(__name__)
 

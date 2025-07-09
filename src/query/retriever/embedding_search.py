@@ -8,7 +8,7 @@ from typing import List, Dict, Tuple, Optional
 import numpy as np
 from dataclasses import dataclass
 
-from kg.extractor.entity_extractor import Entity, Relationship
+from src.kg.extractor.entity_extractor import Entity, Relationship
 from src.data.document_processor import DocumentChunk
 
 logger = logging.getLogger(__name__)

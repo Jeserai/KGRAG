@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 from dataclasses import asdict
 
-from kg.extractor.entity_extractor import Entity, Relationship
+from src.kg.extractor.entity_extractor import Entity, Relationship
 
 class GraphStorage:
     def __init__(self, base_path: str = "data", threshold: int = 1000):

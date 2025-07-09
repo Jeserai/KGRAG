@@ -8,7 +8,7 @@ from typing import List, Dict, Set, Tuple, Optional
 from dataclasses import dataclass
 from collections import defaultdict, deque
 
-from kg.extractor.entity_extractor import Entity, Relationship
+from src.kg.extractor.entity_extractor import Entity, Relationship
 
 logger = logging.getLogger(__name__)
 

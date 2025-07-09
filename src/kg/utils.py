@@ -1,4 +1,4 @@
-from kg.extractor.entity_extractor import EntityExtractor, Entity, Relationship
+from src.kg.extractor.entity_extractor import EntityExtractor, Entity, Relationship
 import json
 import re
 import logging
