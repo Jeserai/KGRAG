@@ -22,7 +22,10 @@ def _entities_to_text(entities: List[Entity], max_entities: int = 10) -> str:
 def _relationships_to_text(rels: List[Relationship], max_rels: int = 15) -> str:
     lines = []
     for r in rels[:max_rels]:
-        lines.append(f"- {r.source_entity} --[{r.relationship_type}]--> {r.target_entity}: {shorten(r.description or '', 100, '…')}")
+        lines.append(
+            f"- {r.source_entity} --[{r.relationship_type}]--> {r.target_entity}: "
+            f"{shorten(r.description or '', width=100, placeholder='…')}"
+        )
     return "\n".join(lines)
 
 
