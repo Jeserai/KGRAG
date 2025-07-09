@@ -1,13 +1,14 @@
 #!/bin/bash
 
 #SBATCH --job-name=kgrag
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:A6000:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=24G
-#SBATCH --time=02:00:00
+#SBATCH --time=08:00:00
+#SBATCH --partition=debug
 #SBATCH --output=logs/kgrag_%j.out
 #SBATCH --error=logs/kgrag_%j.err
+#SBATCH --pty bash
 
 set -euo pipefail
 

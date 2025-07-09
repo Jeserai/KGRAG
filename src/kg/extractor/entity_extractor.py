@@ -90,6 +90,8 @@ class EntityExtractor:
                 temperature=0.1,
                 stop_sequences=[self.completion_delimiter]
             )
+
+            print(response)
             
             # Parse the structured response
             entities, relationships = self._parse_extraction_response(response, chunk_id)
