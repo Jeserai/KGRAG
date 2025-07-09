@@ -117,7 +117,7 @@ class EntityExtractor:
         logger.info(f"Batch extracted {len(all_entities)} entities and {len(all_relationships)} relationships")
         return all_entities, all_relationships
     
-    def _parse_extraction_response(self, response: str, chunk_id: str) -> Tuple[List[Entity], List[Relationship]]:
+    def parse_response(self, response: str, chunk_id: str) -> Tuple[List[Entity], List[Relationship]]:
         """Parse the structured LLM response into entities and relationships."""
         entities = []
         relationships = []
