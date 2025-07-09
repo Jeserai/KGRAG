@@ -79,9 +79,10 @@ class EntityExtractor:
         """
         prompt = self.get_extraction_prompt(chunk.text)
         response = self.model_manager.generate(prompt, max_tokens=400, temperature=0.1)
-
+        logger.info(f"Response: {response}")
         entities, relationships = self.parse_response(response, chunk.id)
-
+        logger.info(f"Entities: {entities}")
+        logger.info(f"Relationships: {relationships}")
         logger.info(f" Chunk {chunk.id}: {len(entities)} entities, {len(relationships)} relationships")
         return entities, relationships
     
