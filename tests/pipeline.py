@@ -89,8 +89,7 @@ def run_pipeline(cfg: Dict[str, Any], input_path: Path | None = None) -> Dict[st
     logger.info("Created %d chunks", len(chunks))
 
     # Extract entities & relationships in batches
-    chunk_data = [(c.text, c.id) for c in chunks]
-    entities, relationships = extractor.extract_batch(chunk_data)
+    entities, relationships = extractor.extract_batch(chunks)
     logger.info("Extracted %d entities and %d relationships", len(entities), len(relationships))
 
     # Merge duplicates
