@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import argparse
 import json
 import logging
-import time
 from pathlib import Path
 from typing import List, Dict, Any
 import sys
@@ -19,6 +17,9 @@ from tests.test_data import get_test_documents
 from kg.extractor.entity_extractor import EntityExtractor
 from kg.extractor.merging import EntityMerger
 from src.kg.storage import GraphStorage
+from src.query.retriever.retriever import HybridRetriever
+from src.query.augment import build_augmented_prompt
+from tests.test_queries import get_test_queries
 
 # Logging setup
 logging.basicConfig(
@@ -97,12 +98,27 @@ def run_pipeline(cfg: Dict[str, Any], input_path: Path | None = None) -> Dict[st
     relationships = extractor.merge_relationships(relationships)
     logger.info("After merge: %d unique entities, %d unique relationships", len(entities), len(relationships))
 
-    storage.save(entities, relationships, name="graph")
-    logger.info("Graph saved via GraphStorage (JSON or Parquet)")
+    storage.save(entities, relationships, name="graphs/graph")
 
-    return {
-        "entities": entities,
-        "relationships": relationships,
-        "chunks": len(chunks),
-        "docs": len(documents),
-    }
+    # ---------------- Query step -----------------
+    queries_dir = Path("results/queries")
+    queries_dir.mkdir(parents=True, exist_ok=True)
+
+    retriever = HybridRetriever(
+        entities=entities,
+        relationships=relationships,
+        embedding_model=model_mgr.embedding_model,
+        chunks=chunks,
+    )
+
+    for q in get_test_queries():
+        ret = retriever.retrieve(q, include_chunks=True)
+        prompt = build_augmented_prompt(q, ret)
+        out_file = queries_dir / f"query_{q[:20].replace(' ','_')}.json"
+        with open(out_file, "w") as f:
+            json.dump({"query": q, "prompt": prompt}, f, indent=2)
+        logger.info("Saved augmented prompt for query '%s'", q)
+
+    logger.info("Graph & query prompts saved under results/")
+
+    return {"docs": len(documents), "chunks": len(chunks), "entities": len(entities), "relationships": len(relationships)}

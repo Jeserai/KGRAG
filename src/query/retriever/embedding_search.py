@@ -162,25 +162,15 @@ class EmbeddingSearch:
             logger.error(f"Error in text chunk search: {e}")
             return []
     
-    def _cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
-        """Calculate cosine similarity between two vectors."""
+    def _cosine_similarity(self, vec1, vec2) -> float:
+        """Cosine similarity using sentence-transformers util (handles tensors on GPU)."""
+        from sentence_transformers.util import cos_sim  # local import to avoid optional dep issues at import time
         try:
-            # Ensure vectors are numpy arrays
-            if not isinstance(vec1, np.ndarray):
-                vec1 = np.array(vec1)
-            if not isinstance(vec2, np.ndarray):
-                vec2 = np.array(vec2)
-            
-            # Calculate cosine similarity
-            dot_product = np.dot(vec1, vec2)
-            norm1 = np.linalg.norm(vec1)
-            norm2 = np.linalg.norm(vec2)
-            
-            if norm1 == 0 or norm2 == 0:
-                return 0.0
-            
-            return dot_product / (norm1 * norm2)
-            
+            score = cos_sim(vec1, vec2)
+            # cos_sim returns a 1×1 tensor or ndarray; convert to float
+            if hasattr(score, "item"):
+                return float(score.item())
+            return float(score)
         except Exception as e:
             logger.warning(f"Error calculating cosine similarity: {e}")
             return 0.0

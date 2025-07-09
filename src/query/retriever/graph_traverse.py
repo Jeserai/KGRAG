@@ -60,29 +60,6 @@ class GraphTraversal:
         
         return dict(adj_list)
     
-    def find_neighbors(self, entity_name: str, max_neighbors: int = 10) -> List[Tuple[Entity, Relationship]]:
-        """
-        Find direct neighbors of an entity.
-        
-        Args:
-            entity_name: Name of the entity
-            max_neighbors: Maximum number of neighbors to return
-            
-        Returns:
-            List of (neighbor_entity, connecting_relationship) tuples
-        """
-        if entity_name not in self.adjacency_list:
-            return []
-        
-        neighbors = []
-        for neighbor_name, relationship in self.adjacency_list[entity_name]:
-            if neighbor_name in self.entities:
-                neighbors.append((self.entities[neighbor_name], relationship))
-        
-        # Sort by relationship confidence if available
-        neighbors.sort(key=lambda x: getattr(x[1], 'confidence', 0.5), reverse=True)
-        return neighbors[:max_neighbors]
-    
     def find_central_entities(self, entity_names: List[str], centrality_type: str = "degree") -> List[EntityScore]:
         """
         Find central entities within a subgraph.
