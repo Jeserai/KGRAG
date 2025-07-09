@@ -8,7 +8,7 @@ from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
 import time
 
-from kg.extractor.entity_extractor import Entity, Relationship
+from src.kg.extractor.entity_extractor import Entity, Relationship
 from src.data.document_processor import DocumentChunk
 from embedding_search import EmbeddingSearch, SearchResult as EmbedSearchResult
 from graph_traverse import GraphTraversal, TraversalResult, EntityScore

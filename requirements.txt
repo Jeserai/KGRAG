@@ -9,5 +9,5 @@ pypdf>=3.0.0
 python-docx>=0.8.11
 PyYAML>=6.0
 numpy>=1.24.0
-neo4j>=5.0.0
+pandas>=2.0.0
 bitsandbytes>=0.41.0
