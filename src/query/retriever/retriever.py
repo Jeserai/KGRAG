@@ -10,8 +10,8 @@ import time
 
 from src.kg.extractor.entity_extractor import Entity, Relationship
 from src.data.document_processor import DocumentChunk
-from embedding_search import EmbeddingSearch, SearchResult as EmbedSearchResult
-from graph_traverse import GraphTraversal, TraversalResult, EntityScore
+from .embedding_search import EmbeddingSearch, SearchResult as EmbedSearchResult
+from .graph_traverse import GraphTraversal, TraversalResult, EntityScore
 
 logger = logging.getLogger(__name__)
 

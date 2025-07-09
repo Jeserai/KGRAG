@@ -1,10 +1,12 @@
-from typing import List, Set
-from graph_traverse import GraphTraversal, Entity, Relationship, TraversalResult
+from typing import List, Set, Tuple
 from collections import deque
-from embedding_search import SearchResult
-from graph_traverse import EntityScore, GraphTraversal, TraversalResult
-from retriever import HybridRetriever, RetrievalResult
-from data.document_processor import DocumentChunk
+
+from src.kg.extractor.entity_extractor import Entity, Relationship
+from src.data.document_processor import DocumentChunk
+
+from .graph_traverse import GraphTraversal, EntityScore, TraversalResult
+from .embedding_search import SearchResult
+from .retriever import HybridRetriever, RetrievalResult
 
 class GraphUtils(GraphTraversal):
     """Utility functions for graph traversal."""

@@ -17,7 +17,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from pipeline import run_pipeline, load_config, to_serializable
+from tests.pipeline import run_pipeline, load_config, to_serializable
 
 logging.basicConfig(
     level=logging.INFO,
