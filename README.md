@@ -61,8 +61,9 @@ run.sh                – SLURM submission script
 
 ##  TODO
 - Improve relationship merging logic.
-- Large-scale evaluation & retrieval benchmarking.
+- Large-scale evaluation, debugging, and retrieval benchmarking.
 - Experiment with implicit-entity discovery from transformer embeddings.
+- Try DRIFT search?
 
 
 ---
