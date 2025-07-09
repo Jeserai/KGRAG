@@ -77,7 +77,7 @@ class EntityExtractor:
         Returns:
             Tuple of (entities, relationships)
         """
-        prompt = self.create_extraction_prompt(chunk.text)
+        prompt = self.get_extraction_prompt(chunk.text)
         response = self.model_manager.generate(prompt, max_tokens=400, temperature=0.1)
 
         entities, relationships = self.parse_response(response, chunk.id)

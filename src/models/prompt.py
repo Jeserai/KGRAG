@@ -14,7 +14,7 @@ DEFAULT_ENTITY_TYPES: List[str] = [
 def get_extraction_prompt(
     text: str, 
     entity_types: Optional[List[str]] = None,
-    max_entities: int = 15
+    max_entities: int = 20
 ) -> str:
     """
     Generates a prompt for entity and relationship extraction.
