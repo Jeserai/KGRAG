@@ -28,10 +28,7 @@ class DocumentChunk:
     text: str
     source_doc_id: str
     chunk_index: int
-    start_char: int
-    end_char: int
     metadata: Dict[str, Any]
-    token_count: int
 
 
 @dataclass 
