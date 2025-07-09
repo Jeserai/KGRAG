@@ -30,7 +30,6 @@ class DocumentChunk:
     chunk_index: int
     metadata: Dict[str, Any]
 
-
 @dataclass 
 class Document:
     """Represents a source document."""
@@ -39,7 +38,6 @@ class Document:
     content: str
     source_path: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
-
 
 class DocumentLoader(ABC):
     """Abstract base class for document loaders."""

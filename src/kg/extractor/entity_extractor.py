@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
+from src.data.document_processor import DocumentChunk
 from src.models.prompt import get_extraction_prompt
 
 logger = logging.getLogger(__name__)
@@ -65,7 +66,7 @@ class EntityExtractor:
         
         logger.info("Initialized EntityExtractor")
     
-    def extract_entities_and_relationships(self, text: str, chunk_id: str) -> Tuple[List[Entity], List[Relationship]]:
+    def extract_entities_and_relationships(self, chunk: DocumentChunk) -> Tuple[List[Entity], List[Relationship]]:
         """
         Extract entities and relationships from a text chunk.
         
@@ -76,32 +77,13 @@ class EntityExtractor:
         Returns:
             Tuple of (entities, relationships)
         """
-        if not text or not text.strip():
-            return [], []
-        
-        try:
-            # Augement a prompt for extraction
-            prompt = get_extraction_prompt(text)
-            
-            # Get LLM response
-            response = self.model_manager.inference(
-                prompt=prompt,
-                max_tokens=2048,
-                temperature=0.1,
-                stop_sequences=[self.completion_delimiter]
-            )
+        prompt = self.create_extraction_prompt(chunk.text)
+        response = self.model_manager.generate(prompt, max_tokens=400, temperature=0.1)
 
-            logger.info(f"Response: {response}")
-            
-            # Parse the structured response
-            entities, relationships = self._parse_extraction_response(response, chunk_id)
-            
-            logger.debug(f"Extracted {len(entities)} entities and {len(relationships)} relationships from chunk {chunk_id}")
-            return entities, relationships
-            
-        except Exception as e:
-            logger.error(f"Error extracting from chunk {chunk_id}: {e}")
-            return [], []
+        entities, relationships = self.parse_response(response, chunk.id)
+
+        logger.info(f" Chunk {chunk.id}: {len(entities)} entities, {len(relationships)} relationships")
+        return entities, relationships
     
     def extract_batch(self, text_chunks: List[Tuple[str, str]]) -> Tuple[List[Entity], List[Relationship]]:
         """
