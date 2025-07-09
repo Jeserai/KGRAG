@@ -85,7 +85,7 @@ class EntityExtractor:
         logger.info(f" Chunk {chunk.id}: {len(entities)} entities, {len(relationships)} relationships")
         return entities, relationships
     
-    def extract_batch(self, text_chunks: List[Tuple[str, str]]) -> Tuple[List[Entity], List[Relationship]]:
+    def extract_batch(self, chunks: List[DocumentChunk]) -> Tuple[List[Entity], List[Relationship]]:
         """
         Extract entities and relationships from multiple text chunks in parallel.
         
@@ -101,8 +101,8 @@ class EntityExtractor:
         # Process chunks in parallel
         with ThreadPoolExecutor(max_workers=4) as executor:
             futures = [
-                executor.submit(self.extract_entities_and_relationships, text, chunk_id)
-                for text, chunk_id in text_chunks
+                executor.submit(self.extract_entities_and_relationships, chunk)
+                for chunk in chunks
             ]
             
             for future in futures:
