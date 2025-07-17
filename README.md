@@ -6,9 +6,13 @@
 ## Quick start
 
 # Testing Command:
+```bash
 $ python tests/main.py [--input /path/to/docs_or_dir] [--config cfg.yaml]  
-Or:  
+```
+Or:
+```bash
 $ sbatch run.sh (or modify the script to use srun if preferred)
+```
 
 # Output:
 1. Save an extracted graph to the `results/` directory
